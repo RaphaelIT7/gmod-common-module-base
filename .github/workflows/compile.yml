@@ -1,12 +1,6 @@
 name: Build
 
 on: [push, pull_request, workflow_dispatch]
-  
-env:
-  PROJECT_NAME: "template"
-  BUILD_64x: "false"
-  REALM: "sv"
-  FINAL_REALM: "sv"
 
 jobs:
   build:
