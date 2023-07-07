@@ -62,6 +62,7 @@ jobs:
   build-linux-64x:
     runs-on: ubuntu-latest
     container: debian:bullseye
+    if: inputs.BUILD_64x == 'true'
     steps:
     - name: Install Dependencies
       if: inputs.BUILD_64x == 'true'
@@ -137,6 +138,7 @@ jobs:
 
   build-windows-64x:
     runs-on: windows-2019
+    if: inputs.BUILD_64x == 'true'
     steps:
     - uses: actions/checkout@v2
       if: inputs.BUILD_64x == 'true'
