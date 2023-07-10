@@ -19,6 +19,10 @@ on:
         type: string
         required: true
         default: "sv"
+      LINUX_FILEEXTENTION:
+        type: string
+        required: false
+        default: "dll"
 
 jobs:
   build-linux:
@@ -56,8 +60,8 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux.dll
-        path: projects/linux/gmake/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.dll
+        name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}
+        path: projects/linux/gmake/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}
 
   build-linux-64x:
     runs-on: ubuntu-latest
@@ -95,8 +99,8 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux64.dll
-        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.dll
+        name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}
+        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}
 
   build-windows:
     runs-on: windows-2019
