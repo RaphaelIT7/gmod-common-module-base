@@ -11,6 +11,14 @@ on:
         type: string
         required: true
         default: "false"
+      BUILD_WINDOWS:
+        type: string
+        required: false
+        default: "true"
+      BUILD_LINUX:
+        type: string
+        required: false
+        default: "true"
       REALM:
         type: string
         required: true
@@ -28,6 +36,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     container: debian:bullseye
+    if: inputs.BUILD_LINUX == 'true'
     steps:
     - name: Install Dependencies
       run: |
@@ -66,7 +75,7 @@ jobs:
   build-linux-64x:
     runs-on: ubuntu-latest
     container: debian:bullseye
-    if: inputs.BUILD_64x == 'true'
+    if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
     - name: Install Dependencies
       run: |
@@ -104,6 +113,7 @@ jobs:
 
   build-windows:
     runs-on: windows-2019
+    if: inputs.BUILD_WINDOWS == 'true'
     steps:
     - uses: actions/checkout@v2
     - uses: actions/checkout@v2
@@ -134,7 +144,7 @@ jobs:
 
   build-windows-64x:
     runs-on: windows-2019
-    if: inputs.BUILD_64x == 'true'
+    if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
     steps:
     - uses: actions/checkout@v2
     - uses: actions/checkout@v2
