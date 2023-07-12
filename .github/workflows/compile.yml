@@ -101,13 +101,13 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-      if: ${{ inputs.UPLOAD == "artifact" }}
+      if: inputs.UPLOAD == 'artifact'
       with:
         name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}
         path: projects/linux/gmake/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}
         
     - name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-      if: ${{ inputs.UPLOAD == "SFTP" }}
+      if: inputs.UPLOAD == 'SFTP'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ inputs.SFTP_USER }}'
@@ -158,13 +158,13 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-      if: ${{ inputs.UPLOAD == "artifact" }}
+      if: inputs.UPLOAD == 'artifact'
       with:
         name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}
         path: projects/linux/gmake/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}
 
     - name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-      if: ${{ inputs.UPLOAD == "SFTP" }}
+      if: inputs.UPLOAD == 'SFTP'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
