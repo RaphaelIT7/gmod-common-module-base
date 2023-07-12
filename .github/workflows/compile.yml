@@ -31,6 +31,35 @@ on:
         type: string
         required: false
         default: "dll"
+      UPLOAD:
+        type: string
+        required: false
+        default: "artifact"
+        description: "How the result should be uploaded. Can be sftp or artifact. Only works for Linux."
+      UPLOAD_PATH:
+        type: string
+        required: false
+        default: "garrysmod/lua/bin/"
+      SFTP_IP:
+        type: string
+        required: false
+        default: ""
+      SFTP_PORT:
+        type: number
+        required: false
+        default: 22
+      SFTP_USER:
+        type: string
+        required: false
+        default: ""
+      SFTP_PASSWORD:
+        type: string
+        required: false
+        default: ""
+      SFTP_PRIVATE_KEY:
+        type: string
+        required: false
+        default: ""
 
 jobs:
   build-linux:
@@ -45,7 +74,10 @@ jobs:
         apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget
     
     - uses: actions/checkout@v3
+      name: Checkout
+
     - uses: actions/checkout@v3
+      name: Checkout garrysmod_common
       with:
         submodules: recursive
         repository: danielga/garrysmod_common
@@ -68,9 +100,24 @@ jobs:
         make
 
     - uses: actions/upload-artifact@v2
+      name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
+      if: inputs.UPLOAD == "artifact"
       with:
         name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}
         path: projects/linux/gmake/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}
+        
+    - name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
+      if: inputs.UPLOAD == "SFTP"
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      with:
+        username: '${{ inputs.SFTP_USER }}'
+        server: '${{ inputs.SFTP_IP }}'
+        ssh_private_key: ${{ inputs.SFTP_PRIVATE_KEY }}
+        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}'
+        remote_path: '${{ inputs.UPLOAD_PATH }}'
+        sftpArgs: '-o ConnectTimeout=5'
+        password: '${{ inputs.SFTP_PASSWORD }}'
+        port: ${{ inputs.SFTP_PORT }}
 
   build-linux-64x:
     runs-on: ubuntu-latest
@@ -84,7 +131,10 @@ jobs:
         apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget
     
     - uses: actions/checkout@v3
+      name: Checkout
+
     - uses: actions/checkout@v3
+      name: Checkout garrysmod_common
       with:
         submodules: recursive
         repository: danielga/garrysmod_common
@@ -107,16 +157,33 @@ jobs:
         make config=releasewithsymbols_x86_64
 
     - uses: actions/upload-artifact@v2
+      name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
+      if: inputs.UPLOAD == "artifact"
       with:
         name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}
         path: projects/linux/gmake/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}
+
+    - name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
+      if: inputs.UPLOAD == "SFTP"
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      with:
+        username: '${{ secrets.SSH_USER }}'
+        server: '${{ secrets.SSH_IP }}'
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}'
+        remote_path: '${{ env.UPLOAD_PATH }}'
+        sftpArgs: '-o ConnectTimeout=5'
+        password: '${{ secrets.SSH_PASSWORD }}'
 
   build-windows:
     runs-on: windows-2019
     if: inputs.BUILD_WINDOWS == 'true'
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      name: Checkout
+
+    - uses: actions/checkout@v3
+      name: Checkout garrysmod_common
       with:
         submodules: recursive
         repository: danielga/garrysmod_common
@@ -138,6 +205,7 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
 
     - uses: actions/upload-artifact@v2
+      name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_win32.dll (Artifact)
       with:
         name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_win32.dll
         path: projects/windows/vs2019/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_win32.dll
@@ -146,8 +214,11 @@ jobs:
     runs-on: windows-2019
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      name: Checkout
+
+    - uses: actions/checkout@v3
+      name: Checkout garrysmod_common
       with:
         submodules: recursive
         repository: danielga/garrysmod_common
@@ -169,6 +240,7 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
 
     - uses: actions/upload-artifact@v2
+      name: Upload gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_win64.dll (Artifact)
       with:
         name: gm${{inputs.FINAL_REALM}}_${{inputs.PROJECT_NAME}}_win64.dll
         path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_win64.dll
