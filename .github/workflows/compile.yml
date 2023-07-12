@@ -59,7 +59,6 @@ on:
       SFTP_PRIVATE_KEY:
         type: string
         required: false
-        default: ""
 
 jobs:
   build-linux:
