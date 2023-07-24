@@ -59,6 +59,10 @@ on:
       SFTP_PRIVATE_KEY:
         type: string
         required: false
+      garrysmod_common:
+        type: string
+        required: false
+        default: "danielga/garrysmod_common"
 
 jobs:
   build-linux:
@@ -79,7 +83,7 @@ jobs:
       name: Checkout garrysmod_common
       with:
         submodules: recursive
-        repository: danielga/garrysmod_common
+        repository: ${{inputs.garrysmod_common}}
         ref: master
         path: 'garrysmod_common'
         
@@ -136,7 +140,7 @@ jobs:
       name: Checkout garrysmod_common
       with:
         submodules: recursive
-        repository: danielga/garrysmod_common
+        repository: ${{inputs.garrysmod_common}}
         ref: x86-64-support-sourcesdk
         path: 'garrysmod_common'
         
@@ -185,7 +189,7 @@ jobs:
       name: Checkout garrysmod_common
       with:
         submodules: recursive
-        repository: danielga/garrysmod_common
+        repository: ${{inputs.garrysmod_common}}
         path: 'garrysmod_common'
         ref: master
 
@@ -220,7 +224,7 @@ jobs:
       name: Checkout garrysmod_common
       with:
         submodules: recursive
-        repository: danielga/garrysmod_common
+        repository: ${{inputs.garrysmod_common}}
         path: 'garrysmod_common'
         ref: x86-64-support-sourcesdk
 
