@@ -133,6 +133,13 @@ jobs:
         repository: ${{inputs.garrysmod_common}}
         ref: ${{inputs.garrysmod_common_branch}}
         path: 'garrysmod_common'
+        
+    - uses: actions/checkout@v3
+      name: Checkout premake-export-compile-commands
+      with:
+        repository: "danielga/premake-export-compile-commands"
+        ref: master
+        path: 'garrysmod_common/premake/premake-export-compile-commands'
 
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
@@ -233,6 +240,13 @@ jobs:
         path: 'garrysmod_common'
         
     - uses: actions/checkout@v3
+      name: Checkout premake-export-compile-commands
+      with:
+        repository: "danielga/premake-export-compile-commands"
+        ref: master
+        path: 'garrysmod_common/premake/premake-export-compile-commands'
+        
+    - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
       with:
         repository: ${{inputs.sourcesdk_minimal}}
@@ -321,7 +335,14 @@ jobs:
         repository: ${{inputs.garrysmod_common}}
         ref: ${{inputs.garrysmod_common_branch}}
         path: 'garrysmod_common'
-        
+       
+    - uses: actions/checkout@v3
+      name: Checkout premake-export-compile-commands
+      with:
+        repository: "danielga/premake-export-compile-commands"
+        ref: master
+        path: 'garrysmod_common/premake/premake-export-compile-commands'
+ 
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
       with:
@@ -386,6 +407,13 @@ jobs:
         repository: ${{inputs.garrysmod_common}}
         ref: ${{inputs.garrysmod_common_64xbranch}}
         path: 'garrysmod_common'
+        
+    - uses: actions/checkout@v3
+      name: Checkout premake-export-compile-commands
+      with:
+        repository: "danielga/premake-export-compile-commands"
+        ref: master
+        path: 'garrysmod_common/premake/premake-export-compile-commands'
         
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
