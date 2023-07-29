@@ -193,7 +193,7 @@ jobs:
         port: ${{ inputs.SFTP_PORT }}
         
     - uses: actions/upload-artifact@v2
-      name: Upload ${{inputs.PROJECT_NAME}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
+      name: Upload ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
       if: inputs.UPLOAD == 'artifact' && inputs.USE_PREFIX == 'false'
       with:
         name: ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
@@ -290,7 +290,7 @@ jobs:
         password: '${{ secrets.SSH_PASSWORD }}'
         
     - uses: actions/upload-artifact@v2
-      name: Upload ${{inputs.PROJECT_NAME}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
+      name: Upload ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
       if: inputs.UPLOAD == 'artifact' && inputs.USE_PREFIX == 'false'
       with:
         name: ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
