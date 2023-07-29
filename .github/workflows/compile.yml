@@ -87,10 +87,6 @@ on:
         type: string
         required: false
         default: "x86-64-branch"
-      use_scanning:
-        type: string
-        required: false
-        default: "false"
       scanning:
         type: string
         required: false
@@ -99,10 +95,6 @@ on:
         type: string
         required: false
         default: "master"
-      use_detouring:
-        type: string
-        required: false
-        default: "false"
       detouring:
         type: string
         required: false
@@ -149,7 +141,6 @@ jobs:
         path: 'garrysmod_common/sourcesdk-minimal'
         
     - uses: actions/checkout@v3
-      if: ${{inputs.use_scanning == 'true'}}
       name: Checkout scanning
       with:
         repository: ${{inputs.scanning}}
@@ -157,7 +148,6 @@ jobs:
         path: 'garrysmod_common/scanning'
         
     - uses: actions/checkout@v3
-      if: ${{inputs.use_detouring == 'true'}}
       name: Checkout detouring
       with:
         repository: ${{inputs.detouring}}
@@ -254,7 +244,6 @@ jobs:
         path: 'garrysmod_common/sourcesdk-minimal'
         
     - uses: actions/checkout@v3
-      if: ${{inputs.use_scanning == 'true'}}
       name: Checkout scanning
       with:
         repository: ${{inputs.scanning}}
@@ -262,7 +251,6 @@ jobs:
         path: 'garrysmod_common/scanning'
         
     - uses: actions/checkout@v3
-      if: ${{inputs.use_detouring == 'true'}}
       name: Checkout detouring
       with:
         repository: ${{inputs.detouring}}
@@ -351,7 +339,6 @@ jobs:
         path: 'garrysmod_common/sourcesdk-minimal'
         
     - uses: actions/checkout@v3
-      if: ${{inputs.use_scanning == 'true'}}
       name: Checkout scanning
       with:
         repository: ${{inputs.scanning}}
@@ -359,7 +346,6 @@ jobs:
         path: 'garrysmod_common/scanning'
         
     - uses: actions/checkout@v3
-      if: ${{inputs.use_detouring == 'true'}}
       name: Checkout detouring
       with:
         repository: ${{inputs.detouring}}
@@ -423,7 +409,6 @@ jobs:
         path: 'garrysmod_common/sourcesdk-minimal'
         
     - uses: actions/checkout@v3
-      if: ${{inputs.use_scanning == 'true'}}
       name: Checkout scanning
       with:
         repository: ${{inputs.scanning}}
@@ -431,7 +416,6 @@ jobs:
         path: 'garrysmod_common/scanning'
         
     - uses: actions/checkout@v3
-      if: ${{inputs.use_detouring == 'true'}}
       name: Checkout detouring
       with:
         repository: ${{inputs.detouring}}
