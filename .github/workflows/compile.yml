@@ -203,7 +203,7 @@ jobs:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}'
+        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
