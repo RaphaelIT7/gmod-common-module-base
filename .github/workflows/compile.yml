@@ -194,7 +194,7 @@ jobs:
       if: inputs.UPLOAD == 'artifact' && inputs.USE_PREFIX == 'false'
       with:
         name: ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
-        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
+        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
 
     - name: Upload ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
       if: inputs.UPLOAD == 'SFTP' && inputs.USE_PREFIX == 'false'
