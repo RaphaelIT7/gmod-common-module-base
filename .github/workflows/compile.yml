@@ -63,43 +63,43 @@ on:
       SFTP_PRIVATE_KEY:
         type: string
         required: false
-      garrysmod_common:
+      GARRYSMOD_COOMON:
         type: string
         required: false
         default: "danielga/garrysmod_common"
-      garrysmod_common_branch:
+      GARRYSMOD_COOMON_BRANCH:
         type: string
         required: false
         default: "master"
-      garrysmod_common_64xbranch:
+      GARRYSMOD_COOMON_64XBRANCH:
         type: string
         required: false
         default: "x86-64-support-sourcesdk"
-      sourcesdk_minimal:
+      SOURCESDK_MINIMAL:
         type: string
         required: false
         default: "danielga/sourcesdk-minimal"
-      sourcesdk_minimal_branch:
+      SOURCESDK_MINIMAL_BRANCH:
         type: string
         required: false
         default: "master"
-      sourcesdk_minimal_64xbranch:
+      SOURCESDK_MINIMAL_64XBANCH:
         type: string
         required: false
         default: "x86-64-branch"
-      scanning:
+      SCANNING:
         type: string
         required: false
         default: "danielga/scanning"
-      scanning_branch:
+      SCANNING_BRANCH:
         type: string
         required: false
         default: "master"
-      detouring:
+      DETOURING:
         type: string
         required: false
         default: "danielga/detouring"
-      detouring_branch:
+      DETOURING_BRANCH:
         type: string
         required: false
         default: "master"
@@ -122,8 +122,8 @@ jobs:
     - uses: actions/checkout@v3
       name: Checkout garrysmod_common
       with:
-        repository: ${{inputs.garrysmod_common}}
-        ref: ${{inputs.garrysmod_common_branch}}
+        repository: ${{inputs.GARRYSMOD_COOMON}}
+        ref: ${{inputs.GARRYSMOD_COOMON_BRANCH}}
         path: 'garrysmod_common'
         
     - uses: actions/checkout@v3
@@ -136,22 +136,22 @@ jobs:
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
       with:
-        repository: ${{inputs.sourcesdk_minimal}}
-        ref: ${{inputs.sourcesdk_minimal_branch}}
+        repository: ${{inputs.SOURCESDK_MINIMAL}}
+        ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
         path: 'garrysmod_common/sourcesdk-minimal'
         
     - uses: actions/checkout@v3
       name: Checkout scanning
       with:
-        repository: ${{inputs.scanning}}
-        ref: ${{inputs.scanning_branch}}
+        repository: ${{inputs.SCANNING}}
+        ref: ${{inputs.SCANNING_BRANCH}}
         path: 'garrysmod_common/scanning'
         
     - uses: actions/checkout@v3
       name: Checkout detouring
       with:
-        repository: ${{inputs.detouring}}
-        ref: ${{inputs.detouring_branch}}
+        repository: ${{inputs.DETOURING}}
+        ref: ${{inputs.DETOURING_BRANCH}}
         path: 'garrysmod_common/detouring'
         
     - name: Install Premake
@@ -225,8 +225,8 @@ jobs:
     - uses: actions/checkout@v3
       name: Checkout garrysmod_common
       with:
-        repository: ${{inputs.garrysmod_common}}
-        ref: ${{inputs.garrysmod_common_64xbranch}}
+        repository: ${{inputs.GARRYSMOD_COOMON}}
+        ref: ${{inputs.GARRYSMOD_COOMON_64XBRANCH}}
         path: 'garrysmod_common'
         
     - uses: actions/checkout@v3
@@ -239,22 +239,22 @@ jobs:
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
       with:
-        repository: ${{inputs.sourcesdk_minimal}}
-        ref: ${{inputs.sourcesdk_minimal_64xbranch}}
+        repository: ${{inputs.SOURCESDK_MINIMAL}}
+        ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
         path: 'garrysmod_common/sourcesdk-minimal'
         
     - uses: actions/checkout@v3
       name: Checkout scanning
       with:
-        repository: ${{inputs.scanning}}
-        ref: ${{inputs.scanning_branch}}
+        repository: ${{inputs.SCANNING}}
+        ref: ${{inputs.SCANNING_BRANCH}}
         path: 'garrysmod_common/scanning'
         
     - uses: actions/checkout@v3
       name: Checkout detouring
       with:
-        repository: ${{inputs.detouring}}
-        ref: ${{inputs.detouring_branch}}
+        repository: ${{inputs.DETOURING}}
+        ref: ${{inputs.DETOURING_BRANCH}}
         path: 'garrysmod_common/detouring'
         
     - name: Install Premake
@@ -320,8 +320,8 @@ jobs:
     - uses: actions/checkout@v3
       name: Checkout garrysmod_common
       with:
-        repository: ${{inputs.garrysmod_common}}
-        ref: ${{inputs.garrysmod_common_branch}}
+        repository: ${{inputs.GARRYSMOD_COOMON}}
+        ref: ${{inputs.GARRYSMOD_COOMON_BRANCH}}
         path: 'garrysmod_common'
        
     - uses: actions/checkout@v3
@@ -334,22 +334,22 @@ jobs:
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
       with:
-        repository: ${{inputs.sourcesdk_minimal}}
-        ref: ${{inputs.sourcesdk_minimal_branch}}
+        repository: ${{inputs.SOURCESDK_MINIMAL}}
+        ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
         path: 'garrysmod_common/sourcesdk-minimal'
         
     - uses: actions/checkout@v3
       name: Checkout scanning
       with:
-        repository: ${{inputs.scanning}}
-        ref: ${{inputs.scanning_branch}}
+        repository: ${{inputs.SCANNING}}
+        ref: ${{inputs.SCANNING_BRANCH}}
         path: 'garrysmod_common/scanning'
         
     - uses: actions/checkout@v3
       name: Checkout detouring
       with:
-        repository: ${{inputs.detouring}}
-        ref: ${{inputs.detouring_branch}}
+        repository: ${{inputs.DETOURING}}
+        ref: ${{inputs.DETOURING_BRANCH}}
         path: 'garrysmod_common/detouring'
 
     - name: Install Premake
@@ -390,8 +390,8 @@ jobs:
     - uses: actions/checkout@v3
       name: Checkout garrysmod_common
       with:
-        repository: ${{inputs.garrysmod_common}}
-        ref: ${{inputs.garrysmod_common_64xbranch}}
+        repository: ${{inputs.GARRYSMOD_COOMON}}
+        ref: ${{inputs.GARRYSMOD_COOMON_64XBRANCH}}
         path: 'garrysmod_common'
         
     - uses: actions/checkout@v3
@@ -404,22 +404,22 @@ jobs:
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
       with:
-        repository: ${{inputs.sourcesdk_minimal}}
-        ref: ${{inputs.sourcesdk_minimal_64xbranch}}
+        repository: ${{inputs.SOURCESDK_MINIMAL}}
+        ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
         path: 'garrysmod_common/sourcesdk-minimal'
         
     - uses: actions/checkout@v3
       name: Checkout scanning
       with:
-        repository: ${{inputs.scanning}}
-        ref: ${{inputs.scanning_branch}}
+        repository: ${{inputs.SCANNING}}
+        ref: ${{inputs.SCANNING_BRANCH}}
         path: 'garrysmod_common/scanning'
         
     - uses: actions/checkout@v3
       name: Checkout detouring
       with:
-        repository: ${{inputs.detouring}}
-        ref: ${{inputs.detouring_branch}}
+        repository: ${{inputs.DETOURING}}
+        ref: ${{inputs.DETOURING_BRANCH}}
         path: 'garrysmod_common/detouring'
 
     - name: Install Premake
