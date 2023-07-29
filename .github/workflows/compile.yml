@@ -83,7 +83,7 @@ on:
         type: string
         required: false
         default: "master"
-      SOURCESDK_MINIMAL_64XBANCH:
+      SOURCESDK_MINIMAL_64XBRANCH:
         type: string
         required: false
         default: "x86-64-branch"
