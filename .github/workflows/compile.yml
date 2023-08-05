@@ -151,6 +151,7 @@ jobs:
         repository: "danielga/premake-export-compile-commands"
         ref: master
         path: 'garrysmod_common/premake/premake-export-compile-commands'
+        submodules: 'recursive'
 
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
@@ -158,6 +159,7 @@ jobs:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
         path: 'garrysmod_common/sourcesdk-minimal'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout scanning
@@ -165,6 +167,7 @@ jobs:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
         path: 'garrysmod_common/scanning'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout detouring
@@ -172,6 +175,7 @@ jobs:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
         path: 'garrysmod_common/detouring'
+        submodules: 'recursive'
         
     - name: Install Premake
       run: |
@@ -254,6 +258,7 @@ jobs:
         repository: "danielga/premake-export-compile-commands"
         ref: master
         path: 'garrysmod_common/premake/premake-export-compile-commands'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
@@ -261,6 +266,7 @@ jobs:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
         path: 'garrysmod_common/sourcesdk-minimal'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout scanning
@@ -268,6 +274,7 @@ jobs:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
         path: 'garrysmod_common/scanning'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout detouring
@@ -275,6 +282,7 @@ jobs:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
         path: 'garrysmod_common/detouring'
+        submodules: 'recursive'
         
     - name: Install Premake
       run: |
@@ -349,6 +357,7 @@ jobs:
         repository: "danielga/premake-export-compile-commands"
         ref: master
         path: 'garrysmod_common/premake/premake-export-compile-commands'
+        submodules: 'recursive'
  
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
@@ -356,6 +365,7 @@ jobs:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
         path: 'garrysmod_common/sourcesdk-minimal'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout scanning
@@ -363,6 +373,7 @@ jobs:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
         path: 'garrysmod_common/scanning'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout detouring
@@ -370,6 +381,7 @@ jobs:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
         path: 'garrysmod_common/detouring'
+        submodules: 'recursive'
 
     - name: Install Premake
       run: |
@@ -419,6 +431,7 @@ jobs:
         repository: "danielga/premake-export-compile-commands"
         ref: master
         path: 'garrysmod_common/premake/premake-export-compile-commands'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout sourcesdk-minimal
@@ -426,6 +439,7 @@ jobs:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
         path: 'garrysmod_common/sourcesdk-minimal'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout scanning
@@ -433,6 +447,7 @@ jobs:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
         path: 'garrysmod_common/scanning'
+        submodules: 'recursive'
         
     - uses: actions/checkout@v3
       name: Checkout detouring
@@ -440,6 +455,7 @@ jobs:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
         path: 'garrysmod_common/detouring'
+        submodules: 'recursive'
 
     - name: Install Premake
       run: |
