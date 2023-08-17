@@ -7,5 +7,5 @@ jobs:
     uses: RaphaelIT7/gmodcommon-module-base/.github/workflows/compile.yml@workflow
     with:
       PROJECT_NAME: "template"
-      BUILD_64x: "false"
+      BUILD_64x: "true"
       REALM: "sv"
