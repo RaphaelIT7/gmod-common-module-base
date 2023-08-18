@@ -18,6 +18,11 @@ on:
         required: false
         default: "false"
         description: "If enabled, the Project is also compiled for the 64x"
+      BUILD_32x:
+        type: string
+        required: false
+        default: "true"
+        description: "If enabled, the Project is also compiled for the 32x"
       BUILD_WINDOWS:
         type: string
         required: false
@@ -127,7 +132,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     container: debian:bullseye
-    if: inputs.BUILD_LINUX == 'true'
+    if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
     - name: Install Dependencies
       run: |
@@ -339,7 +344,7 @@ jobs:
 
   build-windows:
     runs-on: windows-2019
-    if: inputs.BUILD_WINDOWS == 'true'
+    if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
     steps:
     - uses: actions/checkout@v3
       name: Checkout
