@@ -133,7 +133,7 @@ on:
         default: "master"
         description: "The detouring branch to use."
 env:
-  PROJECT_NAME: ${{inputs.USE_PREFIX == 'true' && 'gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}' || '${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}'}}
+  PROJECT_NAME: ${{inputs.USE_PREFIX == 'true' && gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}} || ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}}}
 
 jobs:
   build-linux:
