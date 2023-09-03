@@ -133,7 +133,7 @@ on:
         default: "master"
         description: "The detouring branch to use."
 env:
-  PROJECT_NAME_START: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', $inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME) }}
+  PROJECT_NAME_START: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME) }}
   PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}', env.PROJECT_NAME_START, inputs.USE_PREFIX == 'true' && '_linux' || '', inputs.LINUX_FILEEXTENTION) }}
 
 jobs:
