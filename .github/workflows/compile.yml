@@ -133,7 +133,8 @@ on:
         default: "master"
         description: "The detouring branch to use."
 env:
-  PROJECT_NAME: ${{inputs.USE_PREFIX == 'true' && gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}} || ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}}}
+  PROJECT_NAME_START: ${{ format('{0}{1}{2}{3}{4}', ${{inputs.USE_PREFIX == 'true' && 'gm' || ''}}, ${{inputs.USE_PREFIX == 'true' && ${{inputs.REALM}} || ''}}, ${{inputs.USE_PREFIX == 'true' && '_' || ''}}, ${{inputs.PROJECT_NAME}}) }}
+  PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}', ${{env.PROJECT_NAME_START}}, ${{inputs.USE_PREFIX == 'true' && '_linux' || ''}}, ${{inputs.LINUX_FILEEXTENTION}}) }}
 
 jobs:
   build-linux:
@@ -205,20 +206,20 @@ jobs:
         make
 
     - uses: actions/upload-artifact@v2
-      name: Upload ${{env.PROJECT_NAME}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_LINUX32}} (Artifact)
       if: inputs.UPLOAD == 'artifact'
       with:
-        name: ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
-        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME}}
+        name: ${{inputs.PROJECT_NAME_LINUX32}}
+        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}
 
-    - name: Upload ${{env.PROJECT_NAME}} (SFTP)
+    - name: Upload ${{env.PROJECT_NAME_LINUX32}} (SFTP)
       if: inputs.UPLOAD == 'SFTP'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME}}'
+        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
