@@ -53,6 +53,11 @@ on:
         required: false
         default: "garrysmod/lua/bin/"
         description: "If UPLOAD is set to SFTP, it will upload the result in the given directory."
+      UPLOAD_PDB:
+        type: string
+        required: false
+        default: "false"
+        description: "If enabled, the .pdb file will also be uploaded."
       SFTP_IP:
         type: string
         required: false
@@ -127,6 +132,8 @@ on:
         required: false
         default: "master"
         description: "The detouring branch to use."
+env:
+  PROJECT_NAME: ${{inputs.USE_PREFIX == 'true' && 'gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}' || '${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}'}}
 
 jobs:
   build-linux:
@@ -198,40 +205,20 @@ jobs:
         make
 
     - uses: actions/upload-artifact@v2
-      name: Upload gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-      if: inputs.UPLOAD == 'artifact' && inputs.USE_PREFIX == 'true'
-      with:
-        name: gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}
-        path: projects/linux/gmake/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}
-        
-    - name: Upload gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-      if: inputs.UPLOAD == 'SFTP' && inputs.USE_PREFIX == 'true'
-      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-      with:
-        username: '${{ inputs.SFTP_USER }}'
-        server: '${{ inputs.SFTP_IP }}'
-        ssh_private_key: ${{ inputs.SFTP_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux.${{inputs.LINUX_FILEEXTENTION}}'
-        remote_path: '${{ inputs.UPLOAD_PATH }}'
-        sftpArgs: '-o ConnectTimeout=5'
-        password: '${{ inputs.SFTP_PASSWORD }}'
-        port: ${{ inputs.SFTP_PORT }}
-        
-    - uses: actions/upload-artifact@v2
-      name: Upload ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-      if: inputs.UPLOAD == 'artifact' && inputs.USE_PREFIX == 'false'
+      name: Upload ${{env.PROJECT_NAME}} (Artifact)
+      if: inputs.UPLOAD == 'artifact'
       with:
         name: ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
-        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
+        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME}}
 
-    - name: Upload ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-      if: inputs.UPLOAD == 'SFTP' && inputs.USE_PREFIX == 'false'
+    - name: Upload ${{env.PROJECT_NAME}} (SFTP)
+      if: inputs.UPLOAD == 'SFTP'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}'
+        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
