@@ -43,6 +43,11 @@ on:
         required: false
         default: "dll"
         description: "The File extension for Linux compiles. Used in cases where you compile a .so file."
+      WINDOWS_FILEEXTENTION:
+        type: string
+        required: false
+        default: "dll"
+        description: "The File extension for Windows compiles."
       UPLOAD:
         type: string
         required: false
@@ -133,7 +138,10 @@ on:
         default: "master"
         description: "The detouring branch to use."
 env:
-  PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux' || '', inputs.LINUX_FILEEXTENTION) }}
+  PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux.' || '.', inputs.LINUX_FILEEXTENTION) }}
+  PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64.' || '.', inputs.LINUX_FILEEXTENTION) }}
+  PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32.' || '.', inputs.WINDOWS_FILEEXTENTION) }}
+  PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64.' || '.', inputs.WINDOWS_FILEEXTENTION) }}
 
 jobs:
   build-linux:
@@ -208,7 +216,7 @@ jobs:
       name: Upload ${{env.PROJECT_NAME_LINUX32}} (Artifact)
       if: inputs.UPLOAD == 'artifact'
       with:
-        name: ${{inputs.PROJECT_NAME_LINUX32}}
+        name: ${{env.PROJECT_NAME_LINUX32}}
         path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX32}} (SFTP)
@@ -292,39 +300,20 @@ jobs:
         make config=releasewithsymbols_x86_64
 
     - uses: actions/upload-artifact@v2
-      name: Upload gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-      if: inputs.UPLOAD == 'artifact' && inputs.USE_PREFIX == 'true'
+      name: Upload ${{env.PROJECT_NAME_LINUX64}} (Artifact)
+      if: inputs.UPLOAD == 'artifact'
       with:
-        name: gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}
-        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}
+        name: ${{env.PROJECT_NAME_LINUX64}}
+        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}
 
-    - name: Upload gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-      if: inputs.UPLOAD == 'SFTP' && inputs.USE_PREFIX == 'true'
+    - name: Upload ${{env.PROJECT_NAME_LINUX64}} (SFTP)
+      if: inputs.UPLOAD == 'SFTP'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_linux64.${{inputs.LINUX_FILEEXTENTION}}'
-        remote_path: '${{ env.UPLOAD_PATH }}'
-        sftpArgs: '-o ConnectTimeout=5'
-        password: '${{ secrets.SSH_PASSWORD }}'
-        
-    - uses: actions/upload-artifact@v2
-      name: Upload ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-      if: inputs.UPLOAD == 'artifact' && inputs.USE_PREFIX == 'false'
-      with:
-        name: ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
-        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}
-
-    - name: Upload ${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-      if: inputs.UPLOAD == 'SFTP' && inputs.USE_PREFIX == 'false'
-      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-      with:
-        username: '${{ secrets.SSH_USER }}'
-        server: '${{ secrets.SSH_IP }}'
-        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.${{inputs.LINUX_FILEEXTENTION}}'
+        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
@@ -390,18 +379,10 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
 
     - uses: actions/upload-artifact@v2
-      if: inputs.USE_PREFIX == 'true'
-      name: Upload gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_win32.dll (Artifact)
+      name: Upload ${{env.PROJECT_NAME_WIN32}} (Artifact)
       with:
-        name: gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_win32.dll
-        path: projects/windows/vs2019/x86/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_win32.dll
-
-    - uses: actions/upload-artifact@v2
-      if: inputs.USE_PREFIX == 'false'
-      name: Upload ${{inputs.PROJECT_NAME}} (Artifact)
-      with:
-        name: ${{inputs.PROJECT_NAME}}.dll
-        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.dll
+        name: ${{env.PROJECT_NAME_WIN32}}
+        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}
 
   build-windows-64x:
     runs-on: windows-2019
@@ -464,15 +445,7 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
 
     - uses: actions/upload-artifact@v2
-      if: inputs.USE_PREFIX == 'true'
-      name: Upload gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_win64.dll (Artifact)
+      name: Upload ${{env.PROJECT_NAME_WIN64}} (Artifact)
       with:
-        name: gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_win64.dll
-        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/gm${{inputs.REALM}}_${{inputs.PROJECT_NAME}}_win64.dll
-        
-    - uses: actions/upload-artifact@v2
-      if: inputs.USE_PREFIX == 'false'
-      name: Upload ${{inputs.PROJECT_NAME}} (Artifact)
-      with:
-        name: ${{inputs.PROJECT_NAME}}.dll
-        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{inputs.PROJECT_NAME}}.dll
+        name: ${{env.PROJECT_NAME_WIN64}}
+        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}
