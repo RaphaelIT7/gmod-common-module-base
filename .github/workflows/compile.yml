@@ -138,14 +138,10 @@ on:
         default: "master"
         description: "The detouring branch to use."
 env:
-  PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux.' || '.', inputs.LINUX_FILEEXTENTION) }}
-  PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64.' || '.', inputs.LINUX_FILEEXTENTION) }}
-  PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32.' || '.', inputs.WINDOWS_FILEEXTENTION) }}
-  PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64.' || '.', inputs.WINDOWS_FILEEXTENTION) }}
-  PROJECT_PDB_LINUX32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux.' || '.', 'pdb') }}
-  PROJECT_PDB_LINUX64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64.' || '.', 'pdb') }}
-  PROJECT_PDB_WIN32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32.' || '.', 'pdb') }}
-  PROJECT_PDB_WIN64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64.' || '.', 'pdb') }}
+  PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux' || '') }}
+  PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
+  PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
+  PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
 
 jobs:
   build-linux:
@@ -217,39 +213,39 @@ jobs:
         make
 
     - uses: actions/upload-artifact@v2
-      name: Upload ${{env.PROJECT_NAME_LINUX32}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
       if: inputs.UPLOAD == 'artifact'
       with:
-        name: ${{env.PROJECT_NAME_LINUX32}}
-        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}
+        name: ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
+        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
 
-    - name: Upload ${{env.PROJECT_NAME_LINUX32}} (SFTP)
+    - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
       if: inputs.UPLOAD == 'SFTP'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}'
+        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
 
     - uses: actions/upload-artifact@v2
-      name: Upload ${{env.PROJECT_PDB_LINUX32}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (Artifact)
       if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
-        name: ${{env.PROJECT_PDB_LINUX32}}
-        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_PDB_LINUX32}}
+        name: ${{env.PROJECT_NAME_LINUX32}}.pdb
+        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
 
-    - name: Upload ${{env.PROJECT_PDB_LINUX32}} (SFTP)
+    - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (SFTP)
       if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_PDB_LINUX32}}'
+        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
@@ -323,39 +319,39 @@ jobs:
         make config=releasewithsymbols_x86_64
 
     - uses: actions/upload-artifact@v2
-      name: Upload ${{env.PROJECT_NAME_LINUX64}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
       if: inputs.UPLOAD == 'artifact'
       with:
-        name: ${{env.PROJECT_NAME_LINUX64}}
-        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}
+        name: ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
+        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
 
-    - name: Upload ${{env.PROJECT_NAME_LINUX64}} (SFTP)
+    - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
       if: inputs.UPLOAD == 'SFTP'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}'
+        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
 
     - uses: actions/upload-artifact@v2
-      name: Upload ${{env.PROJECT_PDB_LINUX64}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (Artifact)
       if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
-        name: ${{env.PROJECT_PDB_LINUX64}}
-        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_PDB_LINUX64}}
+        name: ${{env.PROJECT_NAME_LINUX64}}.pdb
+        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
 
-    - name: Upload ${{env.PROJECT_PDB_LINUX64}} (SFTP)
+    - name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (SFTP)
       if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_PDB_LINUX64}}'
+        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
@@ -421,17 +417,17 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
 
     - uses: actions/upload-artifact@v2
-      name: Upload ${{env.PROJECT_NAME_WIN32}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
       with:
-        name: ${{env.PROJECT_NAME_WIN32}}
-        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}
+        name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
 
     - uses: actions/upload-artifact@v2
       if: inputs.UPLOAD_PDB == 'true'
-      name: Upload ${{env.PROJECT_PDB_WIN32}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
       with:
-        name: ${{env.PROJECT_NAME_WIN32}}
-        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_PDB_WIN32}}
+        name: ${{env.PROJECT_NAME_WIN32}}.pdb
+        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
 
   build-windows-64x:
     runs-on: windows-2019
@@ -494,14 +490,14 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
 
     - uses: actions/upload-artifact@v2
-      name: Upload ${{env.PROJECT_NAME_WIN64}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
       with:
-        name: ${{env.PROJECT_NAME_WIN64}}
-        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}
+        name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
 
     - uses: actions/upload-artifact@v2
       if: inputs.UPLOAD_PDB == 'true'
-      name: Upload ${{env.PROJECT_PDB_WIN64}} (Artifact)
+      name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
       with:
-        name: ${{env.PROJECT_PDB_WIN64}}
-        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_PDB_WIN64}}
+        name: ${{env.PROJECT_NAME_WIN64}}.pdb
+        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
