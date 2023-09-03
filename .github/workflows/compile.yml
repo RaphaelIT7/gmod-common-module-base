@@ -8,6 +8,11 @@ on:
         required: true
         default: "template"
         description: "The Project to compile. This should be the same value as you set in the premake5.lua"
+      PROJECT_PATH:
+        type: string
+        required: false
+        default: ""
+        description: "The Path to the project"
       USE_PREFIX:
         type: string
         required: false
@@ -199,16 +204,19 @@ jobs:
         
     - name: Install Premake
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         wget https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz -O premake.tar.gz
         tar -xvf premake.tar.gz --directory=/usr/bin
         gcc --version
 
     - name: Generate Project
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         premake5 --gmcommon=garrysmod_common gmake
 
     - name: Make
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         cd projects/linux/gmake
         make
 
@@ -305,16 +313,19 @@ jobs:
         
     - name: Install Premake
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         wget https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz -O premake.tar.gz
         tar -xvf premake.tar.gz --directory=/usr/bin
         gcc --version
 
     - name: Generate Project
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         premake5 --gmcommon=garrysmod_common gmake
 
     - name: Make 64x
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         cd projects/linux/gmake
         make config=releasewithsymbols_x86_64
 
@@ -404,15 +415,18 @@ jobs:
 
     - name: Install Premake
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
          curl -L https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-windows.zip -o premake.zip
          tar -xf premake.zip
 
     - name: Generate Project
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         ./premake5.exe --gmcommon=garrysmod_common vs2019
 
     - name: Build
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         cd projects/windows/vs2019
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
 
@@ -477,15 +491,18 @@ jobs:
 
     - name: Install Premake
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
          curl -L https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-windows.zip -o premake.zip
          tar -xf premake.zip
 
     - name: Generate Project
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         ./premake5.exe --gmcommon=garrysmod_common vs2019
 
     - name: Build
       run: |
+        cd "${{inputs.PROJECT_PATH}}"
         cd projects/windows/vs2019
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
 
