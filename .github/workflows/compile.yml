@@ -142,6 +142,10 @@ env:
   PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64.' || '.', inputs.LINUX_FILEEXTENTION) }}
   PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32.' || '.', inputs.WINDOWS_FILEEXTENTION) }}
   PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64.' || '.', inputs.WINDOWS_FILEEXTENTION) }}
+  PROJECT_PDB_LINUX32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux.' || '.', 'pdb') }}
+  PROJECT_PDB_LINUX64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64.' || '.', 'pdb') }}
+  PROJECT_PDB_WIN32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32.' || '.', 'pdb') }}
+  PROJECT_PDB_WIN64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64.' || '.', 'pdb') }}
 
 jobs:
   build-linux:
@@ -227,6 +231,25 @@ jobs:
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
         local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}'
+        remote_path: '${{ env.UPLOAD_PATH }}'
+        sftpArgs: '-o ConnectTimeout=5'
+        password: '${{ secrets.SSH_PASSWORD }}'
+
+    - uses: actions/upload-artifact@v2
+      name: Upload ${{env.PROJECT_PDB_LINUX32}} (Artifact)
+      if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
+      with:
+        name: ${{env.PROJECT_PDB_LINUX32}}
+        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_PDB_LINUX32}}
+
+    - name: Upload ${{env.PROJECT_PDB_LINUX32}} (SFTP)
+      if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      with:
+        username: '${{ secrets.SSH_USER }}'
+        server: '${{ secrets.SSH_IP }}'
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_PDB_LINUX32}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
@@ -318,6 +341,25 @@ jobs:
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
 
+    - uses: actions/upload-artifact@v2
+      name: Upload ${{env.PROJECT_PDB_LINUX64}} (Artifact)
+      if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
+      with:
+        name: ${{env.PROJECT_PDB_LINUX64}}
+        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_PDB_LINUX64}}
+
+    - name: Upload ${{env.PROJECT_PDB_LINUX64}} (SFTP)
+      if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      with:
+        username: '${{ secrets.SSH_USER }}'
+        server: '${{ secrets.SSH_IP }}'
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_PDB_LINUX64}}'
+        remote_path: '${{ env.UPLOAD_PATH }}'
+        sftpArgs: '-o ConnectTimeout=5'
+        password: '${{ secrets.SSH_PASSWORD }}'
+
   build-windows:
     runs-on: windows-2019
     if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
@@ -384,6 +426,13 @@ jobs:
         name: ${{env.PROJECT_NAME_WIN32}}
         path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}
 
+    - uses: actions/upload-artifact@v2
+      if: inputs.UPLOAD_PDB == 'true'
+      name: Upload ${{env.PROJECT_PDB_WIN32}} (Artifact)
+      with:
+        name: ${{env.PROJECT_NAME_WIN32}}
+        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_PDB_WIN32}}
+
   build-windows-64x:
     runs-on: windows-2019
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
@@ -449,3 +498,10 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_WIN64}}
         path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}
+
+    - uses: actions/upload-artifact@v2
+      if: inputs.UPLOAD_PDB == 'true'
+      name: Upload ${{env.PROJECT_PDB_WIN64}} (Artifact)
+      with:
+        name: ${{env.PROJECT_PDB_WIN64}}
+        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_PDB_WIN64}}
