@@ -147,7 +147,7 @@ env:
   PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
   PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
   PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
-  PROJECT_PATH: ${{ format('{0}{1}{2}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH, inputs.PROJECT_PATH != '' && (endsWith(inputs.PROJECT_PATH, '/') && '' || '/') || '') }}
+  PROJECT_PATH: ${{ format('{0}{1}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH) }}
 
 jobs:
   build-linux:
@@ -169,14 +169,14 @@ jobs:
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common'
         
     - uses: actions/checkout@v3
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
         ref: master
-        path: '${{env.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
 
     - uses: actions/checkout@v3
@@ -184,7 +184,7 @@ jobs:
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -192,7 +192,7 @@ jobs:
       with:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/scanning'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -200,24 +200,24 @@ jobs:
       with:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/detouring'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
         submodules: 'recursive'
         
     - name: Install Premake
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         wget https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz -O premake.tar.gz
         tar -xvf premake.tar.gz --directory=/usr/bin
         gcc --version
 
     - name: Generate Project
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         premake5 --gmcommon=garrysmod_common gmake
 
     - name: Make
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         cd projects/linux/gmake
         make
 
@@ -278,14 +278,14 @@ jobs:
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_64XBRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common'
         
     - uses: actions/checkout@v3
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
         ref: master
-        path: '${{env.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -293,7 +293,7 @@ jobs:
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -301,7 +301,7 @@ jobs:
       with:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/scanning'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -309,24 +309,24 @@ jobs:
       with:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/detouring'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
         submodules: 'recursive'
         
     - name: Install Premake
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         wget https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz -O premake.tar.gz
         tar -xvf premake.tar.gz --directory=/usr/bin
         gcc --version
 
     - name: Generate Project
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         premake5 --gmcommon=garrysmod_common gmake
 
     - name: Make 64x
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         cd projects/linux/gmake
         make config=releasewithsymbols_x86_64
 
@@ -380,14 +380,14 @@ jobs:
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common'
        
     - uses: actions/checkout@v3
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
         ref: master
-        path: '${{env.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
  
     - uses: actions/checkout@v3
@@ -395,7 +395,7 @@ jobs:
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -403,7 +403,7 @@ jobs:
       with:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/scanning'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -411,23 +411,23 @@ jobs:
       with:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/detouring'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
         submodules: 'recursive'
 
     - name: Install Premake
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
          curl -L https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-windows.zip -o premake.zip
          tar -xf premake.zip
 
     - name: Generate Project
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         ./premake5.exe --gmcommon=garrysmod_common vs2019
 
     - name: Build
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         cd projects/windows/vs2019
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
 
@@ -456,14 +456,14 @@ jobs:
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_64XBRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common'
         
     - uses: actions/checkout@v3
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
         ref: master
-        path: '${{env.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -471,7 +471,7 @@ jobs:
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -479,7 +479,7 @@ jobs:
       with:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/scanning'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -487,23 +487,23 @@ jobs:
       with:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
-        path: '${{env.PROJECT_PATH}}garrysmod_common/detouring'
+        path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
         submodules: 'recursive'
 
     - name: Install Premake
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
          curl -L https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-windows.zip -o premake.zip
          tar -xf premake.zip
 
     - name: Generate Project
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         ./premake5.exe --gmcommon=garrysmod_common vs2019
 
     - name: Build
       run: |
-        ${{env.PROJECT_PATH}}
+        ${{inputs.PROJECT_PATH}}
         cd projects/windows/vs2019
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
 
