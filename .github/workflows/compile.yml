@@ -147,7 +147,7 @@ env:
   PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
   PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
   PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
-  PROJECT_PATH: ${{ format('{0}{1}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH) }}
+  PROJECT_PATH: ${{ format('{0}{1}{2}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH, inputs.PROJECT_PATH != '' && '/ ' || '') }}
 
 jobs:
   build-linux:
@@ -169,14 +169,14 @@ jobs:
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_BRANCH}}
-        path: 'garrysmod_common'
+        path: '${{env.PROJECT_PATH}}garrysmod_common'
         
     - uses: actions/checkout@v3
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
         ref: master
-        path: 'garrysmod_common/premake/premake-export-compile-commands'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
 
     - uses: actions/checkout@v3
@@ -184,7 +184,7 @@ jobs:
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
-        path: 'garrysmod_common/sourcesdk-minimal'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -192,7 +192,7 @@ jobs:
       with:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
-        path: 'garrysmod_common/scanning'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -200,7 +200,7 @@ jobs:
       with:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
-        path: 'garrysmod_common/detouring'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/detouring'
         submodules: 'recursive'
         
     - name: Install Premake
@@ -278,14 +278,14 @@ jobs:
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_64XBRANCH}}
-        path: 'garrysmod_common'
+        path: '${{env.PROJECT_PATH}}garrysmod_common'
         
     - uses: actions/checkout@v3
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
         ref: master
-        path: 'garrysmod_common/premake/premake-export-compile-commands'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -293,7 +293,7 @@ jobs:
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
-        path: 'garrysmod_common/sourcesdk-minimal'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -301,7 +301,7 @@ jobs:
       with:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
-        path: 'garrysmod_common/scanning'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -309,7 +309,7 @@ jobs:
       with:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
-        path: 'garrysmod_common/detouring'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/detouring'
         submodules: 'recursive'
         
     - name: Install Premake
@@ -380,14 +380,14 @@ jobs:
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_BRANCH}}
-        path: 'garrysmod_common'
+        path: '${{env.PROJECT_PATH}}garrysmod_common'
        
     - uses: actions/checkout@v3
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
         ref: master
-        path: 'garrysmod_common/premake/premake-export-compile-commands'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
  
     - uses: actions/checkout@v3
@@ -395,7 +395,7 @@ jobs:
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
-        path: 'garrysmod_common/sourcesdk-minimal'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -403,7 +403,7 @@ jobs:
       with:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
-        path: 'garrysmod_common/scanning'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -411,7 +411,7 @@ jobs:
       with:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
-        path: 'garrysmod_common/detouring'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/detouring'
         submodules: 'recursive'
 
     - name: Install Premake
@@ -456,14 +456,14 @@ jobs:
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_64XBRANCH}}
-        path: 'garrysmod_common'
+        path: '${{env.PROJECT_PATH}}garrysmod_common'
         
     - uses: actions/checkout@v3
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
         ref: master
-        path: 'garrysmod_common/premake/premake-export-compile-commands'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -471,7 +471,7 @@ jobs:
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
         ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
-        path: 'garrysmod_common/sourcesdk-minimal'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -479,7 +479,7 @@ jobs:
       with:
         repository: ${{inputs.SCANNING}}
         ref: ${{inputs.SCANNING_BRANCH}}
-        path: 'garrysmod_common/scanning'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
     - uses: actions/checkout@v3
@@ -487,7 +487,7 @@ jobs:
       with:
         repository: ${{inputs.DETOURING}}
         ref: ${{inputs.DETOURING_BRANCH}}
-        path: 'garrysmod_common/detouring'
+        path: '${{env.PROJECT_PATH}}garrysmod_common/detouring'
         submodules: 'recursive'
 
     - name: Install Premake
