@@ -147,7 +147,7 @@ env:
   PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
   PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
   PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
-  PROJECT_PATH: ${{ format('{0}{1}{2}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH, inputs.PROJECT_PATH != '' && '/ ' || '') }}
+  PROJECT_PATH: ${{ format('{0}{1}{2}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH, inputs.PROJECT_PATH != '' && endsWith(inputs.PROJECT_PATH, '/') && '' || '/' || '') }}
 
 jobs:
   build-linux:
