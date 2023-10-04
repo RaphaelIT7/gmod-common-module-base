@@ -3,6 +3,11 @@ name: Build
 on:
   workflow_call:
     inputs:
+      ARTIFACT_EXPIRE:
+        type: string
+        required: false
+        default: "30"
+        description: "How long the Artifacts are available. 30 days by default so you don't end up live me hitting the spending limit after 4 days (Got too many artifacts)."
       PROJECT_NAME:
         type: string
         required: true
@@ -227,6 +232,7 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
         path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
+        retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
       if: inputs.UPLOAD == 'SFTP'
@@ -246,6 +252,7 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_LINUX32}}.pdb
         path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
+        retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (SFTP)
       if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
@@ -336,6 +343,7 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
         path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
+        retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
       if: inputs.UPLOAD == 'SFTP'
@@ -355,6 +363,7 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_LINUX64}}.pdb
         path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
+        retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (SFTP)
       if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
@@ -436,6 +445,7 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
         path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - uses: actions/upload-artifact@v2
       if: inputs.UPLOAD_PDB == 'true'
@@ -443,6 +453,7 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_WIN32}}.pdb
         path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
+        retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
   build-windows-64x:
     runs-on: windows-2019
@@ -512,6 +523,7 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
         path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - uses: actions/upload-artifact@v2
       if: inputs.UPLOAD_PDB == 'true'
@@ -519,3 +531,4 @@ jobs:
       with:
         name: ${{env.PROJECT_NAME_WIN64}}.pdb
         path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
+        retention-days: ${{inputs.ARTIFACT_EXPIRE}}
