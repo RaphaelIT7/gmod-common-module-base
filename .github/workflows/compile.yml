@@ -231,7 +231,7 @@ jobs:
         cd projects/linux/gmake
         make
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
       if: inputs.UPLOAD == 'artifact'
       with:
@@ -251,7 +251,7 @@ jobs:
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (Artifact)
       if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
@@ -342,7 +342,7 @@ jobs:
         cd projects/linux/gmake
         make config=releasewithsymbols_x86_64
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
       if: inputs.UPLOAD == 'artifact'
       with:
@@ -362,7 +362,7 @@ jobs:
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (Artifact)
       if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
@@ -445,14 +445,14 @@ jobs:
         cd projects/windows/vs2019
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
       with:
         name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
         path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       if: inputs.UPLOAD_PDB == 'true'
       name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
       with:
@@ -523,14 +523,14 @@ jobs:
         cd projects/windows/vs2019
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
       with:
         name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
         path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       if: inputs.UPLOAD_PDB == 'true'
       name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
       with:
