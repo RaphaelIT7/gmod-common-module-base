@@ -171,17 +171,17 @@ jobs:
         apt update
         apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget
     
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout garrysmod_common
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_BRANCH}}
         path: '${{inputs.PROJECT_PATH}}garrysmod_common'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
@@ -189,7 +189,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout sourcesdk-minimal
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
@@ -197,7 +197,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout scanning
       with:
         repository: ${{inputs.SCANNING}}
@@ -205,7 +205,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout detouring
       with:
         repository: ${{inputs.DETOURING}}
@@ -282,17 +282,17 @@ jobs:
         apt update
         apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget
     
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout garrysmod_common
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_64XBRANCH}}
         path: '${{inputs.PROJECT_PATH}}garrysmod_common'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
@@ -300,7 +300,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout sourcesdk-minimal
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
@@ -308,7 +308,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout scanning
       with:
         repository: ${{inputs.SCANNING}}
@@ -316,7 +316,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout detouring
       with:
         repository: ${{inputs.DETOURING}}
@@ -386,17 +386,17 @@ jobs:
     runs-on: windows-2019
     if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout garrysmod_common
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_BRANCH}}
         path: '${{inputs.PROJECT_PATH}}garrysmod_common'
        
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
@@ -404,7 +404,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
  
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout sourcesdk-minimal
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
@@ -412,7 +412,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout scanning
       with:
         repository: ${{inputs.SCANNING}}
@@ -420,7 +420,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout detouring
       with:
         repository: ${{inputs.DETOURING}}
@@ -464,17 +464,17 @@ jobs:
     runs-on: windows-2019
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout garrysmod_common
       with:
         repository: ${{inputs.GARRYSMOD_COOMON}}
         ref: ${{inputs.GARRYSMOD_COOMON_64XBRANCH}}
         path: '${{inputs.PROJECT_PATH}}garrysmod_common'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout premake-export-compile-commands
       with:
         repository: "danielga/premake-export-compile-commands"
@@ -482,7 +482,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout sourcesdk-minimal
       with:
         repository: ${{inputs.SOURCESDK_MINIMAL}}
@@ -490,7 +490,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout scanning
       with:
         repository: ${{inputs.SCANNING}}
@@ -498,7 +498,7 @@ jobs:
         path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
         submodules: 'recursive'
         
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout detouring
       with:
         repository: ${{inputs.DETOURING}}
