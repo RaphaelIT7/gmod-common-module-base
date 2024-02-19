@@ -187,7 +187,7 @@ jobs:
       run: |
         dpkg --add-architecture i386
         apt update
-        apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget
+        apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget curl
     
     - uses: actions/checkout@v4
       name: Checkout
@@ -308,7 +308,7 @@ jobs:
       run: |
         dpkg --add-architecture i386
         apt update
-        apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget
+        apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget curl
     
     - uses: actions/checkout@v4
       name: Checkout
