@@ -272,7 +272,7 @@ jobs:
     - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
       if: inputs.UPLOAD == 'pterodactyl'
       run: |
-        cd rojects/linux/gmake/x86/ReleaseWithSymbols/
+        cd projects/linux/gmake/x86/ReleaseWithSymbols/
         curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
           -H 'Accept: application/json' \
           -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
@@ -393,7 +393,7 @@ jobs:
     - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
       if: inputs.UPLOAD == 'pterodactyl'
       run: |
-        cd rojects/linux/gmake/x86/ReleaseWithSymbols/
+        cd projects/linux/gmake/x86/ReleaseWithSymbols/
         curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" \
           -H 'Accept: application/json' \
           -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
