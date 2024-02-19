@@ -67,7 +67,7 @@ on:
         type: string
         required: false
         default: "artifact"
-        description: "How the result should be uploaded. Can be sftp or artifact. Only works for Linux."
+        description: "How the result should be uploaded. Can be sftp, artifact or pterodactyl. Only works for Linux."
       UPLOAD_PATH:
         type: string
         required: false
@@ -102,6 +102,23 @@ on:
         type: string
         required: false
         description: "The Private Key to use for the SFTP server. Leave this empty to use a password."
+      PTERODACTYL_URL:
+        type: string
+        required: false
+        description: "The URL to the Pterodactyl site"
+      PTERODACTYL_SERVER:
+        type: string
+        required: false
+        description: "The Server ID to upload the file"
+      PTERODACTYL_KEY:
+        type: string
+        required: false
+        description: "The API Key to use for Pterodactyl"
+      PTERODACTYL_PATH:
+        type: string
+        required: false
+        default: "garrysmod%2Flua%2Fbin%2f"
+        description: "The Path to upload the file into. Repace / with %2F"
       GARRYSMOD_COOMON:
         type: string
         required: false
@@ -233,14 +250,14 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-      if: inputs.UPLOAD == 'artifact'
+      if: tolower(inputs.UPLOAD) == 'artifact'
       with:
         name: ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
         path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-      if: inputs.UPLOAD == 'SFTP'
+      if: tolower(inputs.UPLOAD) == 'sftp'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
@@ -251,16 +268,26 @@ jobs:
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
 
+    - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
+      if: tolower(inputs.UPLOAD) == 'pterodactyl'
+      run: |
+        cd rojects/linux/gmake/x86/ReleaseWithSymbols/
+        curl "https://${{inputs.PTERODACTYL_URL}}/api/client/servers/${{inputs.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
+          -H 'Accept: application/json' \
+          -H 'Authorization: Bearer ${{inputs.PTERODACTYL_KEY}}' \
+          -X POST \
+          --data-binary '${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
+
     - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (Artifact)
-      if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
+      if: tolower(inputs.UPLOAD) == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
         name: ${{env.PROJECT_NAME_LINUX32}}.pdb
         path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
         retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (SFTP)
-      if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
+      if: tolower(inputs.UPLOAD) == 'sftp' && inputs.UPLOAD_PDB == 'true'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
@@ -344,14 +371,14 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-      if: inputs.UPLOAD == 'artifact'
+      if: tolower(inputs.UPLOAD) == 'artifact'
       with:
         name: ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
         path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-      if: inputs.UPLOAD == 'SFTP'
+      if: tolower(inputs.UPLOAD) == 'sftp'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
@@ -362,16 +389,26 @@ jobs:
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
 
+    - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
+      if: tolower(inputs.UPLOAD) == 'pterodactyl'
+      run: |
+        cd rojects/linux/gmake/x86/ReleaseWithSymbols/
+        curl "https://${{inputs.PTERODACTYL_URL}}/api/client/servers/${{inputs.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" \
+          -H 'Accept: application/json' \
+          -H 'Authorization: Bearer ${{inputs.PTERODACTYL_KEY}}' \
+          -X POST \
+          --data-binary '${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
+
     - uses: actions/upload-artifact@v3
       name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (Artifact)
-      if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
+      if: tolower(inputs.UPLOAD) == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
         name: ${{env.PROJECT_NAME_LINUX64}}.pdb
         path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
         retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (SFTP)
-      if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
+      if: tolower(inputs.UPLOAD) == 'SFTP' && inputs.UPLOAD_PDB == 'true'
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         username: '${{ secrets.SSH_USER }}'
