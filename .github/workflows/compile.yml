@@ -276,7 +276,7 @@ jobs:
           -H 'Accept: application/json' \
           -H 'Authorization: Bearer ${{inputs.PTERODACTYL_KEY}}' \
           -X POST \
-          --data-binary '${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
+          --data-binary '@${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
 
     - uses: actions/upload-artifact@v4
       name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (Artifact)
@@ -397,7 +397,7 @@ jobs:
           -H 'Accept: application/json' \
           -H 'Authorization: Bearer ${{inputs.PTERODACTYL_KEY}}' \
           -X POST \
-          --data-binary '${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
+          --data-binary '@${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
 
     - uses: actions/upload-artifact@v4
       name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (Artifact)
