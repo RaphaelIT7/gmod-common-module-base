@@ -102,18 +102,19 @@ on:
         type: string
         required: false
         description: "The Private Key to use for the SFTP server. Leave this empty to use a password."
-      PTERODACTYL_URL:
-        type: string
-        required: false
-        description: "The URL to the Pterodactyl site"
-      PTERODACTYL_SERVER:
-        type: string
-        required: false
-        description: "The Server ID to upload the file"
-      PTERODACTYL_KEY:
-        type: string
-        required: false
-        description: "The API Key to use for Pterodactyl"
+      # All variables below are secrets, so pass them along as secrets. I should probably do this for other vars as well.
+      #PTERODACTYL_URL:
+      #  type: string
+      #  required: false
+      #  description: "The URL to the Pterodactyl site"
+      #PTERODACTYL_SERVER:
+      #  type: string
+      #  required: false
+      #  description: "The Server ID to upload the file"
+      #PTERODACTYL_KEY:
+      #  type: string
+      #  required: false
+      #  description: "The API Key to use for Pterodactyl"
       PTERODACTYL_PATH:
         type: string
         required: false
@@ -272,9 +273,9 @@ jobs:
       if: inputs.UPLOAD == 'pterodactyl'
       run: |
         cd rojects/linux/gmake/x86/ReleaseWithSymbols/
-        curl "https://${{inputs.PTERODACTYL_URL}}/api/client/servers/${{inputs.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
+        curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
           -H 'Accept: application/json' \
-          -H 'Authorization: Bearer ${{inputs.PTERODACTYL_KEY}}' \
+          -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
           -X POST \
           --data-binary '@${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
 
@@ -393,9 +394,9 @@ jobs:
       if: inputs.UPLOAD == 'pterodactyl'
       run: |
         cd rojects/linux/gmake/x86/ReleaseWithSymbols/
-        curl "https://${{inputs.PTERODACTYL_URL}}/api/client/servers/${{inputs.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" \
+        curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" \
           -H 'Accept: application/json' \
-          -H 'Authorization: Bearer ${{inputs.PTERODACTYL_KEY}}' \
+          -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
           -X POST \
           --data-binary '@${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
 
