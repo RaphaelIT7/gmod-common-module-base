@@ -374,7 +374,7 @@ jobs:
       name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
       if: inputs.UPLOAD == 'artifact'
       with:
-        name: ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
+        name: "${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)"
         path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
@@ -404,7 +404,7 @@ jobs:
       name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (Artifact)
       if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
-        name: ${{env.PROJECT_NAME_LINUX64}}.pdb
+        name: "${{env.PROJECT_NAME_LINUX64}}.pdb (64x)"
         path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
         retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
@@ -564,7 +564,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
       with:
-        name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
         path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
@@ -572,6 +572,6 @@ jobs:
       if: inputs.UPLOAD_PDB == 'true'
       name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
       with:
-        name: ${{env.PROJECT_NAME_WIN64}}.pdb
+        name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
         path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
         retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
