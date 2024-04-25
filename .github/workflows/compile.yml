@@ -254,7 +254,7 @@ jobs:
       if: inputs.UPLOAD == 'artifact'
       with:
         name: ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
-        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
+        path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
@@ -264,7 +264,7 @@ jobs:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
+        local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
@@ -272,6 +272,7 @@ jobs:
     - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
       if: inputs.UPLOAD == 'pterodactyl'
       run: |
+        ${{env.PROJECT_PATH}}
         cd projects/linux/gmake/x86/ReleaseWithSymbols/
         curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
           -H 'Accept: application/json' \
@@ -284,7 +285,7 @@ jobs:
       if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
         name: ${{env.PROJECT_NAME_LINUX32}}.pdb
-        path: projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
+        path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
         retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (SFTP)
@@ -294,7 +295,7 @@ jobs:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb'
+        local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
@@ -375,7 +376,7 @@ jobs:
       if: inputs.UPLOAD == 'artifact'
       with:
         name: "${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)"
-        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
+        path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
@@ -385,7 +386,7 @@ jobs:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
+        local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
@@ -393,6 +394,7 @@ jobs:
     - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
       if: inputs.UPLOAD == 'pterodactyl'
       run: |
+        ${{env.PROJECT_PATH}}
         cd projects/linux/gmake/x86/ReleaseWithSymbols/
         curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" \
           -H 'Accept: application/json' \
@@ -405,7 +407,7 @@ jobs:
       if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
       with:
         name: "${{env.PROJECT_NAME_LINUX64}}.pdb (64x)"
-        path: projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
+        path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
         retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
     - name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (SFTP)
@@ -415,7 +417,7 @@ jobs:
         username: '${{ secrets.SSH_USER }}'
         server: '${{ secrets.SSH_IP }}'
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: 'projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb'
+        local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb'
         remote_path: '${{ env.UPLOAD_PATH }}'
         sftpArgs: '-o ConnectTimeout=5'
         password: '${{ secrets.SSH_PASSWORD }}'
@@ -487,7 +489,7 @@ jobs:
       name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
       with:
         name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
-        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        path: ${{inputs.PROJECT_PATH}}projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - uses: actions/upload-artifact@v4
@@ -495,7 +497,7 @@ jobs:
       name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
       with:
         name: ${{env.PROJECT_NAME_WIN32}}.pdb
-        path: projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
+        path: ${{inputs.PROJECT_PATH}}projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
         retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
   build-windows-64x:
@@ -565,7 +567,7 @@ jobs:
       name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
       with:
         name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
-        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        path: ${{inputs.PROJECT_PATH}}projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
         retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
     - uses: actions/upload-artifact@v4
@@ -573,5 +575,5 @@ jobs:
       name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
       with:
         name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
-        path: projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
+        path: ${{inputs.PROJECT_PATH}}projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
         retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
