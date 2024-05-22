@@ -90,6 +90,13 @@ jobs:
           mkdir win64
 
       - uses: actions/download-artifact@v4
+        with:
+          path: win32/
+  
+      - name: How me da files
+        run: ls -R win32/
+
+      - uses: actions/download-artifact@v4
         if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
         name: Download ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
         with:
