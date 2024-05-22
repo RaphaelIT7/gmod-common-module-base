@@ -174,3 +174,34 @@ The detouring repository to use.
 > default: "master"
 
 The detouring branch to use.
+
+# Release Workflow
+The release workflow has a few additional fields.  
+For this workflow to work, you cannot set `UPLOAD`.  
+[This is a template](https://github.com/RaphaelIT7/gmod-common-module-base/blob/workflow/.github/workflows/compile-release.yml)
+
+#### RELEASE_PRE
+> default: false
+
+Marks the release as a pre-release  
+
+#### RELEASE_DRAFT
+> default: false
+
+Marks the release as a draft  
+
+#### RELEASE_LATEST
+> default: false
+
+Marks the release as the latest release  
+
+#### RELEASE_DELETEARTIFACT
+> default: true
+
+Deletes the uploaded artifacts from the workflow after they were added to the release.  
+
+#### RELEASE_PDB
+> default: false
+
+Adds the .pdb files to the release.  
+NOTE: You also need to set `UPLOAD_PDB: "true"`
