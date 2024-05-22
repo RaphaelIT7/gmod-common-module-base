@@ -1,6 +1,11 @@
 name: Build
 
-on: [push, pull_request, workflow_dispatch]
+on: 
+  push:
+    paths:
+      - '.github/workflows/compile-release.yml'
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build-release:
