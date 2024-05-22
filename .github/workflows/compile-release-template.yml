@@ -1,0 +1,13 @@
+name: Build
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile.yml@workflow
+    with:
+      PROJECT_NAME: "template"
+      BUILD_64x: "true"
+      REALM: "sv"
+      RELEASE: true
+      RELEASE_DRAFT: true
