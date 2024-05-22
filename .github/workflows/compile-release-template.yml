@@ -10,8 +10,6 @@ jobs:
       BUILD_64x: "true"
       REALM: "sv"
       ARTIFACT_EXPIRE: "1"
-    outputs:
-      workflow_run_id: ${{ steps.get_run_id.outputs.workflow_run_id }}
   
   release:
     uses: RaphaelIT7/gmod-common-module-base/.github/workflows/release.yml@workflow
@@ -22,4 +20,4 @@ jobs:
       BUILD_64x: "true"
       REALM: "sv"
       RELEASE_DRAFT: true
-      ARTIFACT_ID: ${{ needs.build.outputs.workflow_run_id }}
+      ARTIFACT_ID: ${{ github.run_id }}
