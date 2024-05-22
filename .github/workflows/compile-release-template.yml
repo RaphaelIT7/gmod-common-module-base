@@ -3,6 +3,8 @@ name: Build & Release Template
 on: 
   push:
     paths:
+      - 'source/**'
+      - 'premake5.lua'
       - '.github/workflows/compile-release.yml'
   pull_request:
   workflow_dispatch:
