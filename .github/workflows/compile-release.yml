@@ -78,6 +78,11 @@ on:
         required: false
         default: true
         description: "Set to true if you want the Artifacts to be deleted after the release was created"
+      RELEASE_PDB:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want the the pdb files to also be released"
       UPLOAD:
         type: string
         required: false
@@ -607,13 +612,6 @@ jobs:
           mkdir win64
 
       - uses: actions/download-artifact@v4
-        with:
-          path: win32/
-
-      - name: How me da files
-        run: ls -R win32/
-
-      - uses: actions/download-artifact@v4
         if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
         name: Download ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
         with:
@@ -644,6 +642,41 @@ jobs:
           name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
           path: "win64/"
           run-id: ${{inputs.ARTIFACT_ID}}
+
+      - uses: actions/download-artifact@v4
+        if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true') && (inputs.UPLOAD_PDB == 'true')
+        name: Download ${{env.PROJECT_NAME_LINUX32}}.pdb
+        with:
+          name: "${{env.PROJECT_NAME_LINUX32}}.pdb"
+          path: "linux32/"
+          run-id: ${{inputs.ARTIFACT_ID}}
+
+      - uses: actions/download-artifact@v4
+        if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true') && (inputs.UPLOAD_PDB == 'true')
+        name: Download ${{env.PROJECT_NAME_LINUX64}}.pdb (64x)
+        with:
+          name: "${{env.PROJECT_NAME_LINUX64}}.pdb (64x)"
+          path: "linux64/"
+          run-id: ${{inputs.ARTIFACT_ID}}
+
+      - uses: actions/download-artifact@v4
+        if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true') && (inputs.UPLOAD_PDB == 'true')
+        name: Download ${{env.PROJECT_NAME_WIN32}}.pdb
+        with:
+          name: "${{env.PROJECT_NAME_WIN32}}.pdb"
+          path: "win32/"
+          run-id: ${{inputs.ARTIFACT_ID}}
+
+      - uses: actions/download-artifact@v4
+        if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true') && (inputs.UPLOAD_PDB == 'true')
+        name: Download ${{env.PROJECT_NAME_WIN64}}.pdb (64x)
+        with:
+          name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
+          path: "win64/"
+          run-id: ${{inputs.ARTIFACT_ID}}
+
+      - name: How me da files
+        run: ls -R win32/
 
       - name: Create Release
         id: create_release
@@ -698,6 +731,50 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: win64/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
           asset_name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x).dll
+          asset_content_type: application/octet-stream
+
+      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb
+        if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true') && (inputs.UPLOAD_PDB == 'true')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: linux32/${{env.PROJECT_NAME_LINUX32}}.pdb
+          asset_name: ${{env.PROJECT_NAME_LINUX32}}.pdb
+          asset_content_type: application/octet-stream
+
+      - name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (64x)
+        if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true') && (inputs.UPLOAD_PDB == 'true')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: linux64/${{env.PROJECT_NAME_LINUX64}}.pdb
+          asset_name: ${{env.PROJECT_NAME_LINUX64}}.pdb (64x)
+          asset_content_type: application/octet-stream
+
+      - name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb
+        if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true') && (inputs.UPLOAD_PDB == 'true')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: win32/${{env.PROJECT_NAME_WIN32}}.pdb
+          asset_name: ${{env.PROJECT_NAME_WIN32}}.pdb
+          asset_content_type: application/octet-stream
+
+      - name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (64x)
+        if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true') && (inputs.UPLOAD_PDB == 'true')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: win64/${{env.PROJECT_NAME_WIN64}}.pdb
+          asset_name: ${{env.PROJECT_NAME_WIN64}}.pdb (64x).dll
           asset_content_type: application/octet-stream
 
       - uses: geekyeggo/delete-artifact@v5
