@@ -69,9 +69,8 @@ on:
         default: true
         description: "Set to true if you want the Artifacts to be deleted after the release was created"
       ARTIFACT_ID:
-        type: boolean
-        required: false
-        default: true
+        type: number
+        required: true
         description: "The run id of the workflow that uploaded the artifacts"
 
 env:
