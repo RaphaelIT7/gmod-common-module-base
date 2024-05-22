@@ -1,0 +1,200 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      PROJECT_NAME:
+        type: string
+        required: true
+        default: "template"
+        description: "The Project to compile. This should be the same value as you set in the premake5.lua"
+      PROJECT_PATH:
+        type: string
+        required: false
+        default: ""
+        description: "The Path to the project"
+      USE_PREFIX:
+        type: string
+        required: false
+        default: "true"
+        description: "If enabled, it will use the gm[realm]_[Project]_[platform].[extension] format. Else, it will just use [Project].[extension] name."
+      BUILD_64x:
+        type: string
+        required: false
+        default: "false"
+        description: "If enabled, the Project is also compiled for the 64x"
+      BUILD_32x:
+        type: string
+        required: false
+        default: "true"
+        description: "If enabled, the Project is also compiled for the 32x"
+      BUILD_WINDOWS:
+        type: string
+        required: false
+        default: "true"
+        description: "If enabled, the Project is compiled for Windows"
+      BUILD_LINUX:
+        type: string
+        required: false
+        default: "true"
+        description: "If enabled, the Project is compiled for Linux"
+      REALM:
+        type: string
+        required: false
+        default: "sv"
+        description: "The Realm this module is compiled for."
+      LINUX_FILEEXTENTION:
+        type: string
+        required: false
+        default: "dll"
+        description: "The File extension for Linux compiles. Used in cases where you compile a .so file."
+      WINDOWS_FILEEXTENTION:
+        type: string
+        required: false
+        default: "dll"
+        description: "The File extension for Windows compiles."
+      RELEASE:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want it to create a release. Always enable this for any type of release!"
+      RELEASE_PRE:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want it to be a prerelease"
+      RELEASE_DRAFT:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want it to be a draft"
+      RELEASE_DELETEARTIFACT:
+        type: boolean
+        required: false
+        default: true
+        description: "Set to true if you want the Artifacts to be deleted after the release was created"
+
+env:
+  PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux' || '') }}
+  PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
+  PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
+  PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
+  PROJECT_PATH: ${{ format('{0}{1}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH) }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-linux-64x, build-windows, build-windows-64x]
+    if: inputs.RELEASE && (inputs.UPLOAD == 'artifact')
+    permissions:
+      contents: write
+    steps:
+      - name: Create folders
+        run: |
+          mkdir linux32
+          mkdir linux64
+          mkdir win32
+          mkdir win64
+
+      - uses: actions/download-artifact@v4
+        if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
+        name: Download ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
+        with:
+          name: "${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}"
+          path: "linux32/"
+
+      - uses: actions/download-artifact@v4
+        if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
+        name: Download ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)
+        with:
+          name: "${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)"
+          path: "linux64/"
+
+      - uses: actions/download-artifact@v4
+        if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
+        name: Download ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        with:
+          name: "${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}"
+          path: "win32/"
+
+      - uses: actions/download-artifact@v4
+        if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
+        name: Download ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)
+        with:
+          name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
+          path: "win64/"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: ${{ inputs.RELEASE_DRAFT }}
+          prerelease: ${{ inputs.RELEASE_PRE }}
+
+      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
+        if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: linux32/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
+          asset_name: ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
+          asset_content_type: application/octet-stream
+
+      - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)
+        if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: linux64/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
+          asset_name: ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)
+          asset_content_type: application/octet-stream
+
+      - name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+        if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: win32/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          asset_name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          asset_content_type: application/octet-stream
+
+      - name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)
+        if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: win64/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          asset_name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x).dll
+          asset_content_type: application/octet-stream
+
+      - uses: geekyeggo/delete-artifact@v5
+        if: inputs.RELEASE_DELETEARTIFACT && (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
+        with:
+          name: "${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}"
+
+      - uses: geekyeggo/delete-artifact@v5
+        if: inputs.RELEASE_DELETEARTIFACT && (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
+        with:
+          name: "${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)"
+
+      - uses: geekyeggo/delete-artifact@v5
+        if: inputs.RELEASE_DELETEARTIFACT && (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
+        with:
+          name: "${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}"
+
+      - uses: geekyeggo/delete-artifact@v5
+        if: inputs.RELEASE_DELETEARTIFACT && (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
+        with:
+          name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
