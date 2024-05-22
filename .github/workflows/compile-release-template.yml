@@ -9,9 +9,10 @@ jobs:
       PROJECT_NAME: "template"
       BUILD_64x: "true"
       REALM: "sv"
+      ARTIFACT_EXPIRE: "1"
   
   release:
-    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile.yml@workflow
+    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/release.yml@workflow
     with:
       PROJECT_NAME: "template"
       BUILD_64x: "true"

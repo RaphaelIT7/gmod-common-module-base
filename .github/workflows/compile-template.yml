@@ -9,3 +9,4 @@ jobs:
       PROJECT_NAME: "template"
       BUILD_64x: "true"
       REALM: "sv"
+      ARTIFACT_EXPIRE: "1"
