@@ -9,7 +9,7 @@ Example of the workflow:
 ```yml
 jobs:
   build:
-    uses: RaphaelIT7/gmodcommon-module-base/.github/workflows/compile.yml@workflow
+    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile.yml@workflow
     with:
       PROJECT_NAME: "template"
       BUILD_64x: "true"
