@@ -12,7 +12,7 @@ jobs:
       ARTIFACT_EXPIRE: "1"
   
   release:
-    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/release.yml@workflow
+    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile-release.yml@workflow
     permissions:
       contents: write
     with:
@@ -20,4 +20,3 @@ jobs:
       BUILD_64x: "true"
       REALM: "sv"
       RELEASE_DRAFT: true
-      ARTIFACT_ID: ${{ github.run_id }}
