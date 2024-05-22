@@ -73,6 +73,11 @@ on:
         required: false
         default: false
         description: "Set to true if you want it to be a draft"
+      RELEASE_LATEST:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want it to be marked as the latest release"
       RELEASE_DELETEARTIFACT:
         type: boolean
         required: false
@@ -680,7 +685,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: shogo82148/actions-create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -688,6 +693,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: ${{ inputs.RELEASE_DRAFT }}
           prerelease: ${{ inputs.RELEASE_PRE }}
+          make_latest: ${{ inputs.RELEASE_LATEST }}
 
       - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
         if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
