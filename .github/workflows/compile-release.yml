@@ -92,7 +92,7 @@ on:
         type: string
         required: false
         default: "artifact"
-        description: "How the result should be uploaded. Can be sftp, artifact or pterodactyl. Only works for Linux."
+        description: "How the result should be uploaded. Should only be artifact"
       UPLOAD_PATH:
         type: string
         required: false
@@ -606,8 +606,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs: [build-linux, build-linux-64x, build-windows, build-windows-64x]
-    permissions:
-      contents: write
     steps:
       - name: Create folders
         run: |

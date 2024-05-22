@@ -12,8 +12,6 @@ on:
 jobs:
   build-release:
     uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile-release.yml@workflow
-    permissions:
-      contents: write
     with:
       PROJECT_NAME: "template"
       BUILD_64x: "true"
