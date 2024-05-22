@@ -68,6 +68,11 @@ on:
         required: false
         default: true
         description: "Set to true if you want the Artifacts to be deleted after the release was created"
+      ARTIFACT_ID:
+        type: boolean
+        required: false
+        default: true
+        description: "The run id of the workflow that uploaded the artifacts"
 
 env:
   PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux' || '') }}
@@ -92,7 +97,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: win32/
-  
+
       - name: How me da files
         run: ls -R win32/
 
@@ -102,6 +107,7 @@ jobs:
         with:
           name: "${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}"
           path: "linux32/"
+          run-id: ${{inputs.ARTIFACT_ID}}
 
       - uses: actions/download-artifact@v4
         if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
@@ -109,6 +115,7 @@ jobs:
         with:
           name: "${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)"
           path: "linux64/"
+          run-id: ${{inputs.ARTIFACT_ID}}
 
       - uses: actions/download-artifact@v4
         if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
@@ -116,6 +123,7 @@ jobs:
         with:
           name: "${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}"
           path: "win32/"
+          run-id: ${{inputs.ARTIFACT_ID}}
 
       - uses: actions/download-artifact@v4
         if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
@@ -123,6 +131,7 @@ jobs:
         with:
           name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
           path: "win64/"
+          run-id: ${{inputs.ARTIFACT_ID}}
 
       - name: Create Release
         id: create_release
