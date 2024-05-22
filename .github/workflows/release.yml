@@ -84,7 +84,6 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
-    needs: [build-linux, build-linux-64x, build-windows, build-windows-64x]
     if: inputs.RELEASE && (inputs.UPLOAD == 'artifact')
     permissions:
       contents: write
