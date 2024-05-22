@@ -3,6 +3,16 @@ name: Release
 on:
   workflow_call:
     inputs:
+      ARTIFACT_EXPIRE:
+        type: string
+        required: false
+        default: "30"
+        description: "How long the Artifacts are available. 30 days by default so you don't end up like me hitting the spending limit after 4 days (Got too many artifacts)."
+      PDB_ARTIFACT_EXPIRE:
+        type: string
+        required: false
+        default: "1"
+        description: "How long the Artifacts for .pdb files are available. 1 days by default."
       PROJECT_NAME:
         type: string
         required: true
