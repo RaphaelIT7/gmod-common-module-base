@@ -178,7 +178,7 @@ The detouring branch to use.
 # Release Workflow
 The release workflow has a few additional fields.  
 For this workflow to work, you cannot set `UPLOAD`.  
-[This is a template](https://github.com/RaphaelIT7/gmod-common-module-base/blob/workflow/.github/workflows/compile-release.yml)
+[This is a template](https://github.com/RaphaelIT7/gmod-common-module-base/blob/workflow/.github/workflows/compile-release-template.yml)
 
 #### RELEASE_PRE
 > default: false
