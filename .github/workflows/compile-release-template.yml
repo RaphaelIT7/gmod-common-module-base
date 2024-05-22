@@ -13,6 +13,8 @@ jobs:
   
   release:
     uses: RaphaelIT7/gmod-common-module-base/.github/workflows/release.yml@workflow
+    permissions:
+      contents: write
     with:
       PROJECT_NAME: "template"
       BUILD_64x: "true"
