@@ -693,22 +693,22 @@ jobs:
           asset_name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x).dll
           asset_content_type: application/octet-stream
 
-      - uses: actions/delete-artifact@v4
+      - uses: geekyeggo/delete-artifact@v5
         if: inputs.RELEASE_DELETEARTIFACT && (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
         with:
           name: "${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}"
 
-      - uses: actions/delete-artifact@v4
+      - uses: geekyeggo/delete-artifact@v5
         if: inputs.RELEASE_DELETEARTIFACT && (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
         with:
           name: "${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)"
 
-      - uses: actions/delete-artifact@v4
+      - uses: geekyeggo/delete-artifact@v5
         if: inputs.RELEASE_DELETEARTIFACT && (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
         with:
           name: "${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}"
 
-      - uses: actions/delete-artifact@v4
+      - uses: geekyeggo/delete-artifact@v5
         if: inputs.RELEASE_DELETEARTIFACT && (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
         with:
           name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
