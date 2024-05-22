@@ -19,5 +19,4 @@ jobs:
       PROJECT_NAME: "template"
       BUILD_64x: "true"
       REALM: "sv"
-      RELEASE: true
       RELEASE_DRAFT: true

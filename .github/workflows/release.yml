@@ -53,11 +53,6 @@ on:
         required: false
         default: "dll"
         description: "The File extension for Windows compiles."
-      RELEASE:
-        type: boolean
-        required: false
-        default: false
-        description: "Set to true if you want it to create a release. Always enable this for any type of release!"
       RELEASE_PRE:
         type: boolean
         required: false
@@ -84,7 +79,6 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: inputs.RELEASE && (inputs.UPLOAD == 'artifact')
     permissions:
       contents: write
     steps:
