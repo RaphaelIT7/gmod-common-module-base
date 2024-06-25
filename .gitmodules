@@ -1,0 +1,3 @@
+[submodule "development/garrysmod_common"]
+	path = development/garrysmod_common
+	url = https://github.com/danielga/garrysmod_common.git
