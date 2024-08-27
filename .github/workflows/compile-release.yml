@@ -680,8 +680,15 @@ jobs:
           path: "win64/"
           run-id: ${{inputs.ARTIFACT_ID}}
 
-      - name: How me da files
+      - name: show me da files
         run: ls -R win32/
+
+      - name: Create sha256
+        run: |
+          echo -n "linux32/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" | sha256sum
+          echo -n "linux64/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" | sha256sum
+          echo -n "win32/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}" | sha256sum
+          echo -n "win64/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}" | sha256sum
 
       - name: Create Release
         id: create_release
