@@ -241,6 +241,9 @@ jobs:
     - name: Generate Project
       run: |
         ${{env.PROJECT_PATH}}
+        echo "${{github.run_id}}" >> workflow_info.txt
+        echo "${{github.run_number}}" >> workflow_info.txt
+        echo "${{github.ref_name}}" >> workflow_info.txt
         premake5 --gmcommon=garrysmod_common gmake
 
     - name: Make
@@ -363,6 +366,9 @@ jobs:
     - name: Generate Project
       run: |
         ${{env.PROJECT_PATH}}
+        echo "${{github.run_id}}" >> workflow_info.txt
+        echo "${{github.run_number}}" >> workflow_info.txt
+        echo "${{github.ref_name}}" >> workflow_info.txt
         premake5 --gmcommon=garrysmod_common gmake
 
     - name: Make 64x
@@ -477,6 +483,9 @@ jobs:
     - name: Generate Project
       run: |
         ${{env.PROJECT_PATH}}
+        echo "${{github.run_id}}" >> workflow_info.txt
+        echo "${{github.run_number}}" >> workflow_info.txt
+        echo "${{github.ref_name}}" >> workflow_info.txt
         ./premake5.exe --gmcommon=garrysmod_common vs2019
 
     - name: Build
@@ -555,6 +564,9 @@ jobs:
     - name: Generate Project
       run: |
         ${{env.PROJECT_PATH}}
+        echo "${{github.run_id}}" >> workflow_info.txt
+        echo "${{github.run_number}}" >> workflow_info.txt
+        echo "${{github.ref_name}}" >> workflow_info.txt
         ./premake5.exe --gmcommon=garrysmod_common vs2019
 
     - name: Build
