@@ -721,7 +721,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: linux64/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
-          asset_name: ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)
+          asset_name: ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
           asset_content_type: application/octet-stream
 
       - name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
@@ -743,7 +743,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: win64/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
-          asset_name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x).dll
+          asset_name: ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
           asset_content_type: application/octet-stream
 
       - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb
@@ -765,7 +765,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: linux64/${{env.PROJECT_NAME_LINUX64}}.pdb
-          asset_name: ${{env.PROJECT_NAME_LINUX64}}.pdb (64x)
+          asset_name: ${{env.PROJECT_NAME_LINUX64}}.pdb
           asset_content_type: application/octet-stream
 
       - name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb
@@ -787,7 +787,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: win64/${{env.PROJECT_NAME_WIN64}}.pdb
-          asset_name: ${{env.PROJECT_NAME_WIN64}}.pdb (64x).dll
+          asset_name: ${{env.PROJECT_NAME_WIN64}}.pdb
           asset_content_type: application/octet-stream
 
       - uses: geekyeggo/delete-artifact@v5
