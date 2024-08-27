@@ -249,7 +249,7 @@ jobs:
         echo "${{github.run_id}}" >> workflow_info.txt
         echo "${{github.run_number}}" >> workflow_info.txt
         echo "${{github.ref_name}}" >> workflow_info.txt
-        echo "${{env.ADDITIONAL_DATA}}" >> workflow_info.txt
+        echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
         premake5 --gmcommon=garrysmod_common gmake
 
     - name: Make
@@ -375,7 +375,7 @@ jobs:
         echo "${{github.run_id}}" >> workflow_info.txt
         echo "${{github.run_number}}" >> workflow_info.txt
         echo "${{github.ref_name}}" >> workflow_info.txt
-        echo "${{env.ADDITIONAL_DATA}}" >> workflow_info.txt
+        echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
         premake5 --gmcommon=garrysmod_common gmake
 
     - name: Make 64x
@@ -493,7 +493,7 @@ jobs:
         echo "${{github.run_id}}" >> workflow_info.txt
         echo "${{github.run_number}}" >> workflow_info.txt
         echo "${{github.ref_name}}" >> workflow_info.txt
-        echo "${{env.ADDITIONAL_DATA}}" >> workflow_info.txt
+        echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
         ./premake5.exe --gmcommon=garrysmod_common vs2019
 
     - name: Build
@@ -575,7 +575,7 @@ jobs:
         echo "${{github.run_id}}" >> workflow_info.txt
         echo "${{github.run_number}}" >> workflow_info.txt
         echo "${{github.ref_name}}" >> workflow_info.txt
-        echo "${{env.ADDITIONAL_DATA}}" >> workflow_info.txt
+        echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
         ./premake5.exe --gmcommon=garrysmod_common vs2019
 
     - name: Build
