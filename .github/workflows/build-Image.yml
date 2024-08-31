@@ -35,3 +35,13 @@ jobs:
         push: true
         tags: |
           "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PROJECT_NAME }}:latest"
+
+    - name: Build and push 64x
+      uses: docker/build-push-action@v2
+      with:
+        context: ./docker
+        file: ./docker/Dockerfile_64
+        platforms: linux/amd64
+        push: true
+        tags: |
+          "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PROJECT_NAME }}:latest_64"
