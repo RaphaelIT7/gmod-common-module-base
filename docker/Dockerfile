@@ -6,7 +6,7 @@ RUN dpkg --add-architecture i386
 
 RUN apt update
 
-RUN apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget curl
+RUN apt install -y build-essential libstdc++6:i386 gcc-multilib g++-multilib curl
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
