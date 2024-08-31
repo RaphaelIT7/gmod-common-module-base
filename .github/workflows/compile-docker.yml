@@ -185,15 +185,9 @@ env:
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    container: debian:bullseye
+    container: raphaelit7/gmod-builder:latest
     if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
-    - name: Install Dependencies
-      run: |
-        dpkg --add-architecture i386
-        apt update
-        apt install -y --no-install-recommends gcc:i386 g++:i386 make libstdc++6:i386 curl git ca-certificates
-    
     - uses: actions/checkout@v4
       name: Checkout
 
@@ -311,15 +305,9 @@ jobs:
 
   build-linux-64x:
     runs-on: ubuntu-latest
-    container: debian:bullseye
+    container: raphaelit7/gmod-builder:latest_64
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
-    - name: Install Dependencies
-      run: |
-        dpkg --add-architecture i386
-        apt update
-        apt install -y build-essential libstdc++6:i386 gcc-multilib g++-multilib curl ca-certificates
-    
     - uses: actions/checkout@v4
       name: Checkout
 
