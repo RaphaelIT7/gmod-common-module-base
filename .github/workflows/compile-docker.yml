@@ -192,7 +192,7 @@ jobs:
       run: |
         dpkg --add-architecture i386
         apt update
-        apt install -y build-essential libstdc++6:i386 gcc-multilib g++-multilib curl ca-certificates
+        apt install -y --no-install-recommends gcc:i386 g++:i386 make libstdc++6:i386 curl git ca-certificates
     
     - uses: actions/checkout@v4
       name: Checkout
