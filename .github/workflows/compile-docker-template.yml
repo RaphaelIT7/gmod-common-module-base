@@ -1,11 +1,12 @@
-name: Build Template
+name: Build Template - Docker
 
 on: 
   push:
     paths:
       - 'source/**'
       - 'premake5.lua'
-      - '.github/workflows/compile.yml'
+      - '.github/workflows/compile-docker-template.yml'
+      - 'docker/**'
   pull_request:
   workflow_dispatch:
 

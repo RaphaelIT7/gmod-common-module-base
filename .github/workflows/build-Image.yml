@@ -3,6 +3,8 @@ name: Update Docker Image
 on:
   workflow_dispatch:
   push:
+    paths:
+      - 'docker/**'
 
 env:
   PROJECT_NAME: gmod-builder # Dockerhub project
