@@ -192,7 +192,7 @@ jobs:
       run: |
         dpkg --add-architecture i386
         apt update
-        apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget curl
+        apt install -y build-essential libstdc++6:i386 gcc-multilib g++-multilib curl
     
     - uses: actions/checkout@v4
       name: Checkout
@@ -239,7 +239,7 @@ jobs:
     - name: Install Premake
       run: |
         ${{env.PROJECT_PATH}}
-        wget https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz -O premake.tar.gz
+        curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
         tar -xvf premake.tar.gz --directory=/usr/bin
         gcc --version
 
@@ -316,9 +316,8 @@ jobs:
     steps:
     - name: Install Dependencies
       run: |
-        dpkg --add-architecture i386
         apt update
-        apt install -y build-essential git libstdc++6:i386 gcc-multilib g++-multilib wget curl
+        apt install -y build-essential curl
     
     - uses: actions/checkout@v4
       name: Checkout
@@ -365,7 +364,7 @@ jobs:
     - name: Install Premake
       run: |
         ${{env.PROJECT_PATH}}
-        wget https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz -O premake.tar.gz
+        curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
         tar -xvf premake.tar.gz --directory=/usr/bin
         gcc --version
 
