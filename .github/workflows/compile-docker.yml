@@ -192,7 +192,7 @@ jobs:
       run: |
         dpkg --add-architecture i386
         apt update
-        apt install -y build-essential libstdc++6:i386 gcc-multilib g++-multilib curl
+        apt install -y build-essential libstdc++6:i386 gcc-multilib g++-multilib curl ca-certificates
     
     - uses: actions/checkout@v4
       name: Checkout
@@ -318,7 +318,7 @@ jobs:
       run: |
         dpkg --add-architecture i386
         apt update
-        apt install -y build-essential libstdc++6:i386 gcc-multilib g++-multilib curl
+        apt install -y build-essential libstdc++6:i386 gcc-multilib g++-multilib curl ca-certificates
     
     - uses: actions/checkout@v4
       name: Checkout
