@@ -1,0 +1,21 @@
+name: Build Template - Docker
+
+on: 
+  push:
+    paths:
+      - 'source/**'
+      - 'premake5.lua'
+      - '.github/workflows/compile-docker-template.yml'
+      - '.github/workflows/compile-docker.yml'
+      - 'docker/**'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile-docker.yml@workflow
+    with:
+      PROJECT_NAME: "template"
+      BUILD_64x: "true"
+      REALM: "sv"
+      ARTIFACT_EXPIRE: "1"

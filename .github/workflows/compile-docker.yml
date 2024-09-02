@@ -185,15 +185,9 @@ env:
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    container: debian:bullseye
+    container: raphaelit7/gmod-builder:latest
     if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
-    - name: Install Dependencies
-      run: |
-        dpkg --add-architecture i386
-        apt update
-        apt install -y --no-install-recommends gcc:i386 g++:i386 make libstdc++6:i386 curl git ca-certificates
-    
     - uses: actions/checkout@v4
       name: Checkout
 
@@ -242,7 +236,6 @@ jobs:
         curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
         tar -xvf premake.tar.gz --directory=/usr/bin
         gcc --version
-        strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX
 
     - name: Generate Project
       run: |
@@ -312,14 +305,9 @@ jobs:
 
   build-linux-64x:
     runs-on: ubuntu-latest
-    container: debian:bullseye
+    container: raphaelit7/gmod-builder:latest_64
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
-    - name: Install Dependencies
-      run: |
-        apt update
-        apt install -y --no-install-recommends build-essential curl git ca-certificates
-    
     - uses: actions/checkout@v4
       name: Checkout
 
