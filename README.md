@@ -127,17 +127,17 @@ The Private Key to use for the SFTP server. Leave this empty to use a password.
 ## Repository Options
 This will list a bunch of options that allow you to use, for example a custom Garry'd Mod common repository or a custom SourceSDK.
 
-#### GARRYSMOD_COOMON
+#### GARRYSMOD_COMMON
 > default: "danielga/garrysmod_common"
 
 The garrysmod_common repository to use. Useful if you have a custom one you want to use.
 
-#### GARRYSMOD_COOMON_BRANCH
+#### GARRYSMOD_COMMON_BRANCH
 > default: "master"
 
 The garrysmod_common branch to use.
 
-#### GARRYSMOD_COOMON_64XBRANCH
+#### GARRYSMOD_COMMON_64XBRANCH
 > default: "x86-64-support-sourcesdk"
 
 #### SOURCESDK_MINIMAL
