@@ -15,5 +15,6 @@ jobs:
     with:
       PROJECT_NAME: "template"
       BUILD_64x: "true"
+      BUILD_MACOS: "true"
       REALM: "sv"
       ARTIFACT_EXPIRE: "1"
