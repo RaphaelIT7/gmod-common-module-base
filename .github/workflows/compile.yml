@@ -1,6 +1,15 @@
 name: Build
 
-on: [push, pull_request, workflow_dispatch]
+on: 
+  push:
+    paths:
+      - '.github/workflows/compile.yml'
+      - 'source/**'
+      - 'libs/**'
+      - 'premake5.lua'
+      - '!source/public/README.md'
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
