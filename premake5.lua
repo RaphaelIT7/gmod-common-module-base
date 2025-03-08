@@ -33,9 +33,3 @@ CreateWorkspace({name = "template", abi_compatible = false})
         --IncludeSteamAPI()
         --IncludeDetouring()
         --IncludeScanning()
-
-        filter("system:windows")
-            files({"source/win32/*.cpp", "source/win32/*.hpp"})
-
-        filter("system:linux or macosx")
-            files({"source/posix/*.cpp", "source/posix/*.hpp"})
