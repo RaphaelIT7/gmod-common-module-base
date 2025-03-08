@@ -3,12 +3,14 @@ This is the module structure I use for my projects.
 
 ## Project Creation
 
-First you want to set all project names in these files:  
+1. First, you want to set all project names in these files:  
 - `premake5.lua`  
 - `.github/workflow/compile.yml`  
 - `development/module/premake5.lua`  
 
-Then you can generate the project files by executing the `build.bat` thats inside the `development/module` folder.  
+2. Then you initialize all submodules by opening Git Bash and run `git submodule update --init --recursive`
+
+3. At last, you now can generate the project files by executing the `build.bat` that's inside the `development/module` folder.  
 Now you can find the generated `.sln` file inside the `development/module/projects/windows/vs2022` folder.  
 
 
