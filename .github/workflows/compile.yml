@@ -125,6 +125,11 @@ on:
         required: false
         default: "garrysmod%2Flua%2Fbin%2f"
         description: "The Path to upload the file into. Repace / with %2F"
+      PTERODACTYL_RESTART:
+        type: string
+        required: false
+        default: "false"
+        description: "If true, it will shutdown the server before uploading the file and afterwards start it back up."
       GARRYSMOD_COMMON:
         type: string
         required: false
@@ -307,11 +312,32 @@ jobs:
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/linux/gmake/x86/ReleaseWithSymbols/
+
+          if [ "${{inputs.PTERODACTYL_RESTART}}" = "true" ]; then
+            curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/power" \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
+            -X POST \
+            -d '{ "signal": "stop" }'
+
+            sleep 10 # Wait a bit
+          fi
+
           curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
             -H 'Accept: application/json' \
             -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
             -X POST \
             --data-binary '@${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
+
+          if [ "${{inputs.PTERODACTYL_RESTART}}" = "true" ]; then
+            curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/power" \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
+            -X POST \
+            -d '{ "signal": "start" }'
+          fi
 
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (Artifact)
@@ -432,11 +458,32 @@ jobs:
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/linux/gmake/x86_64/ReleaseWithSymbols/
+
+          if [ "${{inputs.PTERODACTYL_RESTART}}" = "true" ]; then
+            curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/power" \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
+            -X POST \
+            -d '{ "signal": "stop" }'
+
+            sleep 10 # Wait a bit
+          fi
+
           curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" \
             -H 'Accept: application/json' \
             -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
             -X POST \
             --data-binary '@${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
+
+          if [ "${{inputs.PTERODACTYL_RESTART}}" = "true" ]; then
+            curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/power" \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
+            -X POST \
+            -d '{ "signal": "start" }'
+          fi
 
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (Artifact)
