@@ -696,7 +696,7 @@ jobs:
         name: Checkout garrysmod_common
         with:
           repository: ${{inputs.GARRYSMOD_COMMON}}
-          ref: ${{inputs.GARRYSMOD_COMMON_BRANCH}}
+          ref: ${{inputs.GARRYSMOD_COMMON_64XBRANCH}}
           path: '${{inputs.PROJECT_PATH}}garrysmod_common'
           
       - uses: actions/checkout@v4
@@ -711,7 +711,7 @@ jobs:
         name: Checkout sourcesdk-minimal
         with:
           repository: ${{inputs.SOURCESDK_MINIMAL}}
-          ref: ${{inputs.SOURCESDK_MINIMAL_BRANCH}}
+          ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
           submodules: 'recursive'
           
