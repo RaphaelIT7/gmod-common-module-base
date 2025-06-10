@@ -506,7 +506,7 @@ jobs:
           password: '${{ secrets.SSH_PASSWORD }}'
 
   build-windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_WINDOWS == 'true')
     steps:
       - uses: actions/checkout@v4
@@ -564,19 +564,22 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
-          ./premake5.exe --gmcommon=garrysmod_common vs2019
+          ./premake5.exe --gmcommon=garrysmod_common vs2022
+
+      - name: Setup MSBuild environment
+        uses: microsoft/setup-msbuild@v1
 
       - name: Build
         run: |
           ${{env.PROJECT_PATH}}
-          cd projects/windows/vs2019
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
+          cd projects/windows/vs2022
+          msbuild /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
 
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
           name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - uses: actions/upload-artifact@v4
@@ -584,11 +587,11 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
         with:
           name: ${{env.PROJECT_NAME_WIN32}}.pdb
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2019/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
   build-windows-64x:
-    runs-on: windows-2019
+    runs-on: windows-2022
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_WINDOWS == 'true')
     steps:
       - uses: actions/checkout@v4
@@ -646,19 +649,22 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
-          ./premake5.exe --gmcommon=garrysmod_common vs2019
+          ./premake5.exe --gmcommon=garrysmod_common vs2022
+
+      - name: Setup MSBuild environment
+        uses: microsoft/setup-msbuild@v1
 
       - name: Build
         run: |
           ${{env.PROJECT_PATH}}
-          cd projects/windows/vs2019
-          & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
+          cd projects/windows/vs2022
+          msbuild /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
 
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
           name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - uses: actions/upload-artifact@v4
@@ -666,7 +672,7 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
         with:
           name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2019/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
   build-macos:
     runs-on: macos-latest
