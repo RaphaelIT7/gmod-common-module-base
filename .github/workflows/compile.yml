@@ -53,6 +53,11 @@ on:
         required: false
         default: "false"
         description: "If enabled, the Project is compiled for MacOS"
+      BUILD_CACHE:
+        type: string
+        required: false
+        default: "false"
+        description: "If enabled, it caches build files to improve build speed"
       REALM:
         type: string
         required: false
@@ -242,6 +247,15 @@ jobs:
           gcc --version
           strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX
 
+      # Could add this for hasing though it may be more useful without it. -${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+      - name: Cache ccache
+        if: inputs.BUILD_CACHE == 'true'
+        uses: actions/cache@v4
+        with:
+          path: /github/home/.cache/ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
+
       - name: Generate Project
         run: |
           ${{env.PROJECT_PATH}}
@@ -255,6 +269,8 @@ jobs:
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/linux/gmake
+          export CC="ccache gcc"
+          export CXX="ccache g++"
           make ${{inputs.ADDITIONAL_ARGS_32x}}
 
       - uses: actions/upload-artifact@v4
@@ -359,6 +375,15 @@ jobs:
           tar -xvf premake.tar.gz --directory=/usr/bin
           gcc --version
 
+      # Could add this for hasing though it may be more useful without it. -${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+      - name: Cache ccache
+        if: inputs.BUILD_CACHE == 'true'
+        uses: actions/cache@v4
+        with:
+          path: /github/home/.cache/ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
+
       - name: Generate Project
         run: |
           ${{env.PROJECT_PATH}}
@@ -372,6 +397,8 @@ jobs:
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/linux/gmake
+          export CC="ccache gcc"
+          export CXX="ccache g++"
           make config=releasewithsymbols_x86_64 ${{inputs.ADDITIONAL_ARGS_64x}}
 
       - uses: actions/upload-artifact@v4
@@ -474,6 +501,13 @@ jobs:
           curl -L https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-windows.zip -o premake.zip
           tar -xf premake.zip
 
+      - name: Cache MSBuild output
+        uses: actions/cache@v4
+        with:
+          path: ${{ inputs.PROJECT_PATH }}projects/
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x
+
       - name: Generate Project
         run: |
           ${{env.PROJECT_PATH}}
@@ -558,6 +592,13 @@ jobs:
           ${{env.PROJECT_PATH}}
           curl -L https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-windows.zip -o premake.zip
           tar -xf premake.zip
+
+      - name: Cache MSBuild output
+        uses: actions/cache@v4
+        with:
+          path: ${{ inputs.PROJECT_PATH }}projects/
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x
 
       - name: Generate Project
         run: |
