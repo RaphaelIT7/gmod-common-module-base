@@ -7,7 +7,6 @@ on:
       - 'premake5.lua'
       - '.github/workflows/compile-docker-template.yml'
       - '.github/workflows/compile-docker.yml'
-      - 'docker/**'
   pull_request:
   workflow_dispatch:
 
