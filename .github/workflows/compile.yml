@@ -83,30 +83,6 @@ on:
         required: false
         default: "false"
         description: "If enabled, the .pdb file will also be uploaded."
-      SFTP_IP:
-        type: string
-        required: false
-        default: ""
-        description: "The IP of the SFTP server."
-      SFTP_PORT:
-        type: string
-        required: false
-        default: 22
-        description: "The Port of the SFTP server."
-      SFTP_USER:
-        type: string
-        required: false
-        default: ""
-        description: "The user for the SFTP server."
-      SFTP_PASSWORD:
-        type: string
-        required: false
-        default: ""
-        description: "The password to use for the SFTP server."
-      SFTP_PRIVATE_KEY:
-        type: string
-        required: false
-        description: "The Private Key to use for the SFTP server. Leave this empty to use a password."
       # All variables below are secrets, so pass them along as secrets. I should probably do this for other vars as well.
       #PTERODACTYL_URL:
       #  type: string
@@ -289,18 +265,6 @@ jobs:
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-        if: inputs.UPLOAD == 'sftp'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
-
       - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
         if: inputs.UPLOAD == 'pterodactyl'
         run: |
@@ -340,18 +304,6 @@ jobs:
           name: ${{env.PROJECT_NAME_LINUX32}}.pdb
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (SFTP)
-        if: inputs.UPLOAD == 'sftp' && inputs.UPLOAD_PDB == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
 
   build-linux-64x:
     runs-on: ubuntu-latest
@@ -430,18 +382,6 @@ jobs:
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
-      - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-        if: inputs.UPLOAD == 'sftp'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
-
       - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
         if: inputs.UPLOAD == 'pterodactyl'
         run: |
@@ -481,18 +421,6 @@ jobs:
           name: "${{env.PROJECT_NAME_LINUX64}}.pdb (64x)"
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (SFTP)
-        if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
 
   build-windows:
     runs-on: windows-2022
@@ -752,18 +680,6 @@ jobs:
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-        if: inputs.UPLOAD == 'sftp'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
-
       - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
         if: inputs.UPLOAD == 'pterodactyl'
         run: |
@@ -782,15 +698,3 @@ jobs:
           name: ${{env.PROJECT_NAME_LINUX32}}.pdb
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (SFTP)
-        if: inputs.UPLOAD == 'sftp' && inputs.UPLOAD_PDB == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
