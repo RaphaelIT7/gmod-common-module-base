@@ -106,6 +106,11 @@ on:
         required: false
         default: "false"
         description: "If true, it will shutdown the server before uploading the file and afterwards start it back up."
+      PTERODACTYL_RESTART_SLEEPTIME:
+        type: string
+        required: false
+        default: "3"
+        description: "How long it will sleep before uploading the new file"
       GARRYSMOD_COMMON:
         type: string
         required: false
@@ -289,7 +294,7 @@ jobs:
             -X POST \
             -d '{ "signal": "stop" }'
 
-            sleep 10 # Wait a bit
+            sleep ${{ inputs.PTERODACTYL_RESTART_SLEEPTIME }}
           fi
 
           curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
@@ -417,7 +422,7 @@ jobs:
             -X POST \
             -d '{ "signal": "stop" }'
 
-            sleep 10 # Wait a bit
+            sleep ${{ inputs.PTERODACTYL_RESTART_SLEEPTIME }}
           fi
 
           curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" \
