@@ -72,7 +72,7 @@ on:
         type: string
         required: false
         default: "artifact"
-        description: "How the result should be uploaded. Can be sftp, artifact or pterodactyl. Only works for Linux."
+        description: "How the result should be uploaded. Can be artifact or pterodactyl. Only works for Linux."
       UPLOAD_PATH:
         type: string
         required: false
@@ -193,7 +193,7 @@ env:
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    container: raphaelit7/gmod-builder:latest
+    container: raphaelit7/gmod-builder:latest_32x
     if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
       - uses: actions/checkout@v4
@@ -237,14 +237,6 @@ jobs:
           ref: ${{inputs.DETOURING_BRANCH}}
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
           submodules: 'recursive'
-          
-      - name: Install Premake
-        run: |
-          ${{env.PROJECT_PATH}}
-          curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
-          tar -xvf premake.tar.gz --directory=/usr/bin
-          gcc --version
-          strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX
 
       # Could add this for hasing though it may be more useful without it. -${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
       - name: Cache ccache
@@ -322,7 +314,7 @@ jobs:
 
   build-linux-64x:
     runs-on: ubuntu-latest
-    container: raphaelit7/gmod-builder:latest_64
+    container: raphaelit7/gmod-builder:latest_64x
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
       - uses: actions/checkout@v4
@@ -366,13 +358,6 @@ jobs:
           ref: ${{inputs.DETOURING_BRANCH}}
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
           submodules: 'recursive'
-          
-      - name: Install Premake
-        run: |
-          ${{env.PROJECT_PATH}}
-          curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
-          tar -xvf premake.tar.gz --directory=/usr/bin
-          gcc --version
 
       # Could add this for hasing though it may be more useful without it. -${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
       - name: Cache ccache

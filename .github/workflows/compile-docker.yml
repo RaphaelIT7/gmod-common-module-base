@@ -48,11 +48,11 @@ on:
         required: false
         default: "true"
         description: "If enabled, the Project is compiled for Linux"
-      BUILD_MACOS:
+      BUILD_CACHE:
         type: string
         required: false
         default: "false"
-        description: "If enabled, the Project is compiled for MacOS"
+        description: "If enabled, it caches build files to improve build speed"
       REALM:
         type: string
         required: false
@@ -72,7 +72,7 @@ on:
         type: string
         required: false
         default: "artifact"
-        description: "How the result should be uploaded. Can be sftp, artifact or pterodactyl. Only works for Linux."
+        description: "How the result should be uploaded. Can be artifact or pterodactyl. Only works for Linux."
       UPLOAD_PATH:
         type: string
         required: false
@@ -83,30 +83,6 @@ on:
         required: false
         default: "false"
         description: "If enabled, the .pdb file will also be uploaded."
-      SFTP_IP:
-        type: string
-        required: false
-        default: ""
-        description: "The IP of the SFTP server."
-      SFTP_PORT:
-        type: string
-        required: false
-        default: 22
-        description: "The Port of the SFTP server."
-      SFTP_USER:
-        type: string
-        required: false
-        default: ""
-        description: "The user for the SFTP server."
-      SFTP_PASSWORD:
-        type: string
-        required: false
-        default: ""
-        description: "The password to use for the SFTP server."
-      SFTP_PRIVATE_KEY:
-        type: string
-        required: false
-        description: "The Private Key to use for the SFTP server. Leave this empty to use a password."
       # All variables below are secrets, so pass them along as secrets. I should probably do this for other vars as well.
       #PTERODACTYL_URL:
       #  type: string
@@ -130,6 +106,11 @@ on:
         required: false
         default: "false"
         description: "If true, it will shutdown the server before uploading the file and afterwards start it back up."
+      PTERODACTYL_RESTART_SLEEPTIME:
+        type: string
+        required: false
+        default: "3"
+        description: "How long it will sleep before uploading the new file"
       GARRYSMOD_COMMON:
         type: string
         required: false
@@ -207,13 +188,12 @@ env:
   PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
   PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
   PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
-  PROJECTFILE_NAME_MACOS: ${{ format('{0}{1}{2}{3}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME) }}
   PROJECT_PATH: ${{ format('{0}{1}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH) }}
 
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    container: raphaelit7/gmod-builder:latest
+    container: raphaelit7/gmod-builder:latest_32x
     if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
       - uses: actions/checkout@v4
@@ -257,14 +237,15 @@ jobs:
           ref: ${{inputs.DETOURING_BRANCH}}
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
           submodules: 'recursive'
-          
-      - name: Install Premake
-        run: |
-          ${{env.PROJECT_PATH}}
-          curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
-          tar -xvf premake.tar.gz --directory=/usr/bin
-          gcc --version
-          strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX
+
+      # Could add this for hasing though it may be more useful without it. -${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+      - name: Cache ccache
+        if: inputs.BUILD_CACHE == 'true'
+        uses: actions/cache@v4
+        with:
+          path: /github/home/.cache/ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
 
       - name: Generate Project
         run: |
@@ -279,6 +260,8 @@ jobs:
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/linux/gmake
+          export CC="ccache gcc"
+          export CXX="ccache g++"
           make ${{inputs.ADDITIONAL_ARGS_32x}}
 
       - uses: actions/upload-artifact@v4
@@ -288,18 +271,6 @@ jobs:
           name: ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-        if: inputs.UPLOAD == 'sftp'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
 
       - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
         if: inputs.UPLOAD == 'pterodactyl'
@@ -315,7 +286,7 @@ jobs:
             -X POST \
             -d '{ "signal": "stop" }'
 
-            sleep 10 # Wait a bit
+            sleep ${{ inputs.PTERODACTYL_RESTART_SLEEPTIME }}
           fi
 
           curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
@@ -341,21 +312,9 @@ jobs:
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (SFTP)
-        if: inputs.UPLOAD == 'sftp' && inputs.UPLOAD_PDB == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
-
   build-linux-64x:
     runs-on: ubuntu-latest
-    container: raphaelit7/gmod-builder:latest_64
+    container: raphaelit7/gmod-builder:latest_64x
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
     steps:
       - uses: actions/checkout@v4
@@ -399,13 +358,15 @@ jobs:
           ref: ${{inputs.DETOURING_BRANCH}}
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
           submodules: 'recursive'
-          
-      - name: Install Premake
-        run: |
-          ${{env.PROJECT_PATH}}
-          curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz
-          tar -xvf premake.tar.gz --directory=/usr/bin
-          gcc --version
+
+      # Could add this for hasing though it may be more useful without it. -${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+      - name: Cache ccache
+        if: inputs.BUILD_CACHE == 'true'
+        uses: actions/cache@v4
+        with:
+          path: /github/home/.cache/ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
 
       - name: Generate Project
         run: |
@@ -420,6 +381,8 @@ jobs:
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/linux/gmake
+          export CC="ccache gcc"
+          export CXX="ccache g++"
           make config=releasewithsymbols_x86_64 ${{inputs.ADDITIONAL_ARGS_64x}}
 
       - uses: actions/upload-artifact@v4
@@ -429,18 +392,6 @@ jobs:
           name: "${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)"
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-        if: inputs.UPLOAD == 'sftp'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
 
       - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
         if: inputs.UPLOAD == 'pterodactyl'
@@ -456,7 +407,7 @@ jobs:
             -X POST \
             -d '{ "signal": "stop" }'
 
-            sleep 10 # Wait a bit
+            sleep ${{ inputs.PTERODACTYL_RESTART_SLEEPTIME }}
           fi
 
           curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}" \
@@ -481,18 +432,6 @@ jobs:
           name: "${{env.PROJECT_NAME_LINUX64}}.pdb (64x)"
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (SFTP)
-        if: inputs.UPLOAD == 'SFTP' && inputs.UPLOAD_PDB == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
 
   build-windows:
     runs-on: windows-2022
@@ -545,6 +484,13 @@ jobs:
           ${{env.PROJECT_PATH}}
           curl -L https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-windows.zip -o premake.zip
           tar -xf premake.zip
+
+      - name: Cache MSBuild output
+        uses: actions/cache@v4
+        with:
+          path: ${{ inputs.PROJECT_PATH }}projects/
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x
 
       - name: Generate Project
         run: |
@@ -631,6 +577,13 @@ jobs:
           curl -L https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-windows.zip -o premake.zip
           tar -xf premake.zip
 
+      - name: Cache MSBuild output
+        uses: actions/cache@v4
+        with:
+          path: ${{ inputs.PROJECT_PATH }}projects/
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x
+
       - name: Generate Project
         run: |
           ${{env.PROJECT_PATH}}
@@ -663,134 +616,3 @@ jobs:
           name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
-  build-macos:
-    runs-on: macos-latest
-    if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_MACOS == 'true')
-    steps:
-      - name: Download Mac OS X 10.7 SDK
-        run: |
-          mkdir -p /tmp/macos-sdk
-          curl -L -o /tmp/macos-sdk/MacOSX10.7.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.7.sdk.tar.xz
-          tar -xf /tmp/macos-sdk/MacOSX10.7.sdk.tar.xz -C /tmp/macos-sdk
-          xcrun --sdk macosx --show-sdk-platform-path
-          sudo cp -R /tmp/macos-sdk/MacOSX10.7.sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
-          ls /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform
-          sudo /usr/libexec/PlistBuddy -c "Set :MinimumSDKVersion 10.7" /Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
-          rm -rf /tmp/macos-sdk
-
-      - uses: actions/checkout@v4
-        name: Checkout
-
-      - uses: actions/checkout@v4
-        name: Checkout garrysmod_common
-        with:
-          repository: ${{inputs.GARRYSMOD_COMMON}}
-          ref: ${{inputs.GARRYSMOD_COMMON_64XBRANCH}}
-          path: '${{inputs.PROJECT_PATH}}garrysmod_common'
-          
-      - uses: actions/checkout@v4
-        name: Checkout premake-export-compile-commands
-        with:
-          repository: "danielga/premake-export-compile-commands"
-          ref: master
-          path: '${{inputs.PROJECT_PATH}}garrysmod_common/premake/premake-export-compile-commands'
-          submodules: 'recursive'
-
-      - uses: actions/checkout@v4
-        name: Checkout sourcesdk-minimal
-        with:
-          repository: ${{inputs.SOURCESDK_MINIMAL}}
-          ref: ${{inputs.SOURCESDK_MINIMAL_64XBRANCH}}
-          path: '${{inputs.PROJECT_PATH}}garrysmod_common/sourcesdk-minimal'
-          submodules: 'recursive'
-          
-      - uses: actions/checkout@v4
-        name: Checkout scanning
-        with:
-          repository: ${{inputs.SCANNING}}
-          ref: ${{inputs.SCANNING_BRANCH}}
-          path: '${{inputs.PROJECT_PATH}}garrysmod_common/scanning'
-          submodules: 'recursive'
-          
-      - uses: actions/checkout@v4
-        name: Checkout detouring
-        with:
-          repository: ${{inputs.DETOURING}}
-          ref: ${{inputs.DETOURING_BRANCH}}
-          path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
-          submodules: 'recursive'
-          
-      - name: Install Premake
-        run: |
-          ${{env.PROJECT_PATH}}
-          curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-macosx.tar.gz
-          tar -xvf premake.tar.gz -C /usr/local/bin/
-          xcodebuild -version
-
-      - name: Generate Project
-        run: |
-          ${{env.PROJECT_PATH}}
-          echo "${{github.run_id}}" >> workflow_info.txt
-          echo "${{github.run_number}}" >> workflow_info.txt
-          echo "${{github.ref_name}}" >> workflow_info.txt
-          echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
-          premake5 --gmcommon=garrysmod_common xcode4
-
-      - name: Make
-        run: |
-          ${{env.PROJECT_PATH}}
-          cd projects/macosx/xcode4/
-          xcodebuild -list -project ${{env.PROJECTFILE_NAME_MACOS}}.xcodeproj
-          xcodebuild -project ${{env.PROJECTFILE_NAME_MACOS}}.xcodeproj -configuration ReleaseWithSymbols
-          ls -aR
-
-      - uses: actions/upload-artifact@v4
-        name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
-        if: inputs.UPLOAD == 'artifact'
-        with:
-          name: ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
-          path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
-          retention-days: ${{inputs.ARTIFACT_EXPIRE}}
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (SFTP)
-        if: inputs.UPLOAD == 'sftp'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
-        if: inputs.UPLOAD == 'pterodactyl'
-        run: |
-          ${{env.PROJECT_PATH}}
-          cd projects/linux/gmake/x86/ReleaseWithSymbols/
-          curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2F${{inputs.PTERODACTYL_PATH}}${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}" \
-            -H 'Accept: application/json' \
-            -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
-            -X POST \
-            --data-binary '@${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}'
-
-      - uses: actions/upload-artifact@v4
-        name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (Artifact)
-        if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
-        with:
-          name: ${{env.PROJECT_NAME_LINUX32}}.pdb
-          path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
-          retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
-
-      - name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (SFTP)
-        if: inputs.UPLOAD == 'sftp' && inputs.UPLOAD_PDB == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: '${{ secrets.SSH_USER }}'
-          server: '${{ secrets.SSH_IP }}'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: '${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb'
-          remote_path: '${{ env.UPLOAD_PATH }}'
-          sftpArgs: '-o ConnectTimeout=5'
-          password: '${{ secrets.SSH_PASSWORD }}'

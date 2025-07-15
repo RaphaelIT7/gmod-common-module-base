@@ -4,16 +4,21 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN echo "path-exclude /usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/excludes && \
     echo "path-exclude /usr/share/doc/*" >> /etc/dpkg/dpkg.cfg.d/excludes && \
-    echo "path-exclude /usr/share/locale/*" >> /etc/dpkg/dpkg.cfg.d/excludes
-
-RUN dpkg --add-architecture i386 && \
+    echo "path-exclude /usr/share/locale/*" >> /etc/dpkg/dpkg.cfg.d/excludes && \
+    dpkg --add-architecture i386 && \
     apt update && \
     apt install -y --no-install-recommends \
         gcc:i386 g++:i386 \
         make ccache \
         libstdc++6:i386 \
         curl git ca-certificates && \
-    apt clean && rm -rf /var/lib/apt/lists/*
+    apt clean && \
+    curl -L -o premake.tar.gz https://github.com/danielga/garrysmod_common/releases/download/premake-build%2F5.0.0-beta2/premake-5.0.0-beta2-linux.tar.gz && \
+    tar -xvf premake.tar.gz --directory=/usr/bin && \
+    rm -f premake.tar.gz && \
+    gcc --version && \
+    strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX && \
+    rm -rf /var/lib/apt/lists/* /usr/share/* /usr/sbin/* /var/cache/* /var/log/* /var/tmp/* /var/lib/dpkg/info/*
 
 ENV CC="ccache gcc"
 ENV CXX="ccache g++"
