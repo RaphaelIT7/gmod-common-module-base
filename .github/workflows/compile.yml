@@ -238,13 +238,12 @@ jobs:
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
           submodules: 'recursive'
 
-      # Could add this for hasing though it may be more useful without it. -${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
       - name: Cache ccache
         if: inputs.BUILD_CACHE == 'true'
         uses: actions/cache@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
 
       - name: Generate Project
@@ -359,13 +358,12 @@ jobs:
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
           submodules: 'recursive'
 
-      # Could add this for hasing though it may be more useful without it. -${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
       - name: Cache ccache
         if: inputs.BUILD_CACHE == 'true'
         uses: actions/cache@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
 
       - name: Generate Project
@@ -489,7 +487,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ inputs.PROJECT_PATH }}projects/
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x
 
       - name: Generate Project
@@ -581,7 +579,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ inputs.PROJECT_PATH }}projects/
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x
 
       - name: Generate Project
