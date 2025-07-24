@@ -1,0 +1,20 @@
+name: Build Cached Template
+
+on: 
+  push:
+    paths:
+      - 'source/**'
+      - 'premake5.lua'
+      - '.github/workflows/compile.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build_cached:
+    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile.yml@workflow
+    with:
+      PROJECT_NAME: "template"
+      BUILD_64x: "true"
+      REALM: "sv"
+      ARTIFACT_EXPIRE: "1"
+      BUILD_CACHE: "true"

@@ -23,8 +23,14 @@ RUN echo "path-exclude /usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/excludes && \
 ENV CC="ccache gcc"
 ENV CXX="ccache g++"
 ENV PATH="/usr/lib/ccache:$PATH"
+ENV CCACHE_COMPILERCHECK=content
+ENV CCACHE_SLOPPINESS=time_macros,include_file_mtime,include_file_ctime,pch_defines
+ENV CCACHE_LOGFILE="/tmp/ccache.log"
+ENV CCACHE_VERBOSE=1
+ENV CCACHE_DEBUG=1
 
-RUN ccache -M 200M
+RUN ccache -M 1G && ccache -z
+
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh

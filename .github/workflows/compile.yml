@@ -243,7 +243,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
 
       - name: Generate Project
@@ -262,6 +262,18 @@ jobs:
           export CC="ccache gcc"
           export CXX="ccache g++"
           make ${{inputs.ADDITIONAL_ARGS_32x}}
+
+      - name: Show ccache stats
+        if: inputs.BUILD_CACHE == 'true'
+        run: ccache -s
+
+      - name: Upload ccache log file for debugging
+        if: inputs.UPLOAD == 'artifact' && inputs.BUILD_CACHE == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.PROJECT_NAME_LINUX32}}-ccache-debug-log
+          path: "/tmp/ccache.log"
+          retention-days: 1
 
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
@@ -363,7 +375,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
 
       - name: Generate Project
@@ -382,6 +394,10 @@ jobs:
           export CC="ccache gcc"
           export CXX="ccache g++"
           make config=releasewithsymbols_x86_64 ${{inputs.ADDITIONAL_ARGS_64x}}
+
+      - name: Show ccache stats
+        if: inputs.BUILD_CACHE == 'true'
+        run: ccache -s
 
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
@@ -487,7 +503,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ inputs.PROJECT_PATH }}projects/
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x
 
       - name: Generate Project
@@ -579,7 +595,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ inputs.PROJECT_PATH }}projects/
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x
 
       - name: Generate Project
