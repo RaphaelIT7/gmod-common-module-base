@@ -1,9 +1,9 @@
 # gmod-common-module-base
 
-This branch contains the actual [workflow](https://github.com/RaphaelIT7/gmod-common-module-base/blob/workflow/.github/workflows/compile.yml) which builds the project.
-If you have any requests or issues with the workflow, feel free to open an issue for it.
+This branch contains the actual [workflow](https://github.com/RaphaelIT7/gmod-common-module-base/blob/workflow/.github/workflows/compile.yml) which builds the project.<br>
+If you have any requests or issues with the workflow, feel free to open an issue for it.<br>
 
-Example usage of this workflow:
+Example usage of this workflow:<br>
 ```yml
 jobs:
   build:
@@ -20,7 +20,7 @@ All options listed below are required to be added to your workflow.
 #### PROJECT_NAME
 > default: template
 
-The Project to compile. This should be the same value as you set in the premake5.lua
+The project to compile. This should be the same value as you set in the premake5.lua
 
 ## Project Options
 All options listed below allow you to adjust the workflow to your needs.
@@ -33,96 +33,103 @@ The Path to the project
 #### USE_PREFIX
 > default: "true"
 
-If enabled, it will use the gm[realm]_[Project]_[platform].[extension] format. Else, it will just use [Project].[extension] name.
+If enabled, it will use the gm[realm]\_[Project]\_[platform].[extension] format. Else, it will just use the [Project].[extension] name.
 
 #### REALM
 > default: "sv"
 
-The Realm this module is compiled for.
+The realm this module is compiled for.
 
 #### LINUX_FILEEXTENTION
 > default: "dll"
 
-The File extension for Linux compiles. Used in cases where you compile a .so file.
+The file extension for Linux compiles. Used in cases where you compile a .so file.
 
 #### WINDOWS_FILEEXTENTION
 > default: "dll"
 
-The File extension for Windows compiles.
+The file extension for Windows compiles.
 
 ## Build Options
 #### BUILD_64x
 > default: "false"
 
-If enabled, the Project is also compiled for the 64x
+If enabled, the project is also compiled for the 64x
 
 #### BUILD_32x
 > default: "true"
 
-If enabled, the Project is also compiled for the 32x
+If enabled, the project is also compiled for the 32x
 
 #### BUILD_WINDOWS
 > default: "true"
 
-If enabled, the Project is also compiled for Windows
+If enabled, the project is also compiled for Windows.
 
 #### BUILD_LINUX
 > default: "true"
 
-If enabled, the Project is also compiled for Linux
+If enabled, the project is also compiled for Linux.
+
+#### BUILD_CACHE
+> default: "false"
+
+If enabled, the workflow will use ccache & GitHub's cache for project files to improve build speed.
 
 ## Upload Options
 #### ARTIFACT_EXPIRE
 > default: 30
 
-How long the Artifacts are available. 30 days by default.
+How long the artifacts are available. 30 days by default.
 
 #### PDB_ARTIFACT_EXPIRE
 > default: 1
 
-How long the Artifacts for .pdb files are available. 1 day by default.
+How long the artifacts for .pdb files are available. 1 day by default.
 
 #### UPLOAD
 > default: "artifact"
 
-How the result should be uploaded. Can be sftp or artifact. Only works for Linux.
-
-#### UPLOAD_PATH
-> default: "garrysmod/lua/bin/"
-
-If UPLOAD is set to SFTP, it will upload the result in the given directory.
+How the result should be uploaded. Can be `pterodactyl` or `artifact`. Only works for Linux/Windows always uses artifacts
 
 #### UPLOAD_PDB
 > default: "false"
 
 If enabled, the .pdb file will also be uploaded.
 
-### SFTP Options
-All options listed below are only used if `UPLOAD` is set to `sftp`.
-SFTP wasn't tested much, so this could have some problems.
+## Pterodactyl Options
 
-#### SFTP_IP
-> default: ""
+#### PTERODACTYL_PATH
+> default: "garrysmod%2Flua%2Fbin%2f"
 
-The IP of the SFTP server.
+The path to upload the file into. Replace / with %2F
 
-#### SFTP_PORT
-> default: 22
+#### PTERODACTYL_RESTART
+> default: "true"
 
-The Port of the SFTP server.
+If true, it will shutdown the server before uploading the file and afterwards start it back up.
 
-#### SFTP_USER
-> default: ""
+#### PTERODACTYL_RESTART_SLEEPTIME
+> default: "3"
 
-The user for the SFTP server.
+How long it will sleep before uploading the new file, giving it time to properly shutdown.
 
-#### SFTP_PASSWORD
-> default: ""
+### Secrets input
 
-The password to use for the SFTP server.
+#### PTERODACTYL_KEY
+> required: "false"
 
-#### SFTP_PRIVATE_KEY
-The Private Key to use for the SFTP server. Leave this empty to use a password.
+A client pterodactyl API key to use for uploading.
+
+#### PTERODACTYL_SERVER
+> required: "false"
+
+The short server id, like `8b67a259` that the file will be uploaded onto.
+
+#### PTERODACTYL_URL
+> required: "false"
+
+The url of the panel, like `localhost.com`. Don't include https:// or a slash after the url.
 
 ## Repository Options
 This will list a bunch of options that allow you to use, for example a custom Garry'd Mod common repository or a custom SourceSDK.
@@ -176,32 +183,32 @@ The detouring repository to use.
 The detouring branch to use.
 
 # Release Workflow
-The release workflow has a few additional fields.  
-For this workflow to work, you cannot set `UPLOAD`.  
+The release workflow has a few additional fields.<br>
+For this workflow to work, you cannot set `UPLOAD`.<br>
 [This is a template](https://github.com/RaphaelIT7/gmod-common-module-base/blob/workflow/.github/workflows/compile-release-template.yml)
 
 #### RELEASE_PRE
 > default: false
 
-Marks the release as a pre-release  
+Marks the release as a pre-release
 
 #### RELEASE_DRAFT
 > default: false
 
-Marks the release as a draft  
+Marks the release as a draft
 
 #### RELEASE_LATEST
 > default: false
 
-Marks the release as the latest release  
+Marks the release as the latest release
 
 #### RELEASE_DELETEARTIFACT
 > default: true
 
-Deletes the uploaded artifacts from the workflow after they were added to the release.  
+Deletes the uploaded artifacts from the workflow after they were added to the release.
 
 #### RELEASE_PDB
 > default: false
 
-Adds the .pdb files to the release.  
+Adds the .pdb files to the release.<br>
 NOTE: You also need to set `UPLOAD_PDB: "true"`

@@ -7,12 +7,12 @@ on:
         type: string
         required: false
         default: "30"
-        description: "How long the Artifacts are available. 30 days by default so you don't end up like me hitting the spending limit after 4 days (Got too many artifacts)."
+        description: "How long the artifacts are available. 30 days by default so you don't end up like me hitting the spending limit after 4 days (Got too many artifacts)."
       PDB_ARTIFACT_EXPIRE:
         type: string
         required: false
         default: "1"
-        description: "How long the Artifacts for .pdb files are available. 1 days by default."
+        description: "How long the artifacts for .pdb files are available. 1 days by default."
       PROJECT_NAME:
         type: string
         required: true
@@ -32,77 +32,47 @@ on:
         type: string
         required: false
         default: "false"
-        description: "If enabled, the Project is also compiled for the 64x"
+        description: "If enabled, the project is also compiled for the 64x."
       BUILD_32x:
         type: string
         required: false
         default: "true"
-        description: "If enabled, the Project is also compiled for the 32x"
+        description: "If enabled, the project is also compiled for the 32x."
       BUILD_WINDOWS:
         type: string
         required: false
         default: "true"
-        description: "If enabled, the Project is compiled for Windows"
+        description: "If enabled, the project is compiled for Windows."
       BUILD_LINUX:
         type: string
         required: false
         default: "true"
-        description: "If enabled, the Project is compiled for Linux"
+        description: "If enabled, the project is compiled for Linux."
       BUILD_CACHE:
         type: string
         required: false
         default: "false"
-        description: "If enabled, it caches build files to improve build speed"
+        description: "If enabled, it caches build files to improve build speed."
       REALM:
         type: string
         required: false
         default: "sv"
-        description: "The Realm this module is compiled for."
+        description: "The realm this module is compiled for."
       LINUX_FILEEXTENTION:
         type: string
         required: false
         default: "dll"
-        description: "The File extension for Linux compiles. Used in cases where you compile a .so file."
+        description: "The file extension for Linux compiles. Used in cases where you compile a .so file."
       WINDOWS_FILEEXTENTION:
         type: string
         required: false
         default: "dll"
-        description: "The File extension for Windows compiles."
-      RELEASE_PRE:
-        type: boolean
-        required: false
-        default: false
-        description: "Set to true if you want it to be a prerelease"
-      RELEASE_DRAFT:
-        type: boolean
-        required: false
-        default: false
-        description: "Set to true if you want it to be a draft"
-      RELEASE_LATEST:
-        type: boolean
-        required: false
-        default: false
-        description: "Set to true if you want it to be marked as the latest release"
-      RELEASE_DELETEARTIFACT:
-        type: boolean
-        required: false
-        default: true
-        description: "Set to true if you want the Artifacts to be deleted after the release was created"
-      RELEASE_PDB:
-        type: boolean
-        required: false
-        default: false
-        description: "Set to true if you want the the pdb files to also be released"
+        description: "The file extension for Windows compiles."
       UPLOAD:
         type: string
         required: false
         default: "artifact"
-        description: "How the result should be uploaded. Can be artifact or pterodactyl. Only works for Linux."
-      UPLOAD_PATH:
-        type: string
-        required: false
-        default: "garrysmod/lua/bin/"
-        description: "If UPLOAD is set to SFTP, it will upload the result in the given directory."
+        description: "How the result should be uploaded. Can be artifact or pterodactyl. Only works for Linux/Windows always uses artifacts."
       UPLOAD_PDB:
         type: string
         required: false
@@ -129,13 +99,13 @@ on:
       PTERODACTYL_RESTART:
         type: string
         required: false
-        default: "false"
+        default: "true"
         description: "If true, it will shutdown the server before uploading the file and afterwards start it back up."
       PTERODACTYL_RESTART_SLEEPTIME:
         type: string
         required: false
         default: "3"
-        description: "How long it will sleep before uploading the new file"
+        description: "How long it will sleep before uploading the new file, giving it time to properly shutdown."
       GARRYSMOD_COMMON:
         type: string
         required: false
@@ -201,6 +171,31 @@ on:
         required: false
         default: ""
         description: "Allows you to pass in a additional arguments to make"
+      RELEASE_PRE:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want it to be a prerelease"
+      RELEASE_DRAFT:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want it to be a draft"
+      RELEASE_LATEST:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want it to be marked as the latest release"
+      RELEASE_DELETEARTIFACT:
+        type: boolean
+        required: false
+        default: true
+        description: "Set to true if you want the Artifacts to be deleted after the release was created"
+      RELEASE_PDB:
+        type: boolean
+        required: false
+        default: false
+        description: "Set to true if you want the the pdb files to also be released"
     secrets:
       PTERODACTYL_KEY:
         required: false
@@ -268,7 +263,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
 
       - name: Generate Project
@@ -287,6 +282,18 @@ jobs:
           export CC="ccache gcc"
           export CXX="ccache g++"
           make ${{inputs.ADDITIONAL_ARGS_32x}}
+
+      - name: Show ccache stats
+        if: inputs.BUILD_CACHE == 'true'
+        run: ccache -s
+
+      - name: Upload ccache log file for debugging
+        if: inputs.UPLOAD == 'artifact' && inputs.BUILD_CACHE == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.PROJECT_NAME_LINUX32}}-ccache-debug-log
+          path: "/tmp/ccache.log"
+          retention-days: 1
 
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
@@ -388,7 +395,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
 
       - name: Generate Project
@@ -407,6 +414,10 @@ jobs:
           export CC="ccache gcc"
           export CXX="ccache g++"
           make config=releasewithsymbols_x86_64 ${{inputs.ADDITIONAL_ARGS_64x}}
+
+      - name: Show ccache stats
+        if: inputs.BUILD_CACHE == 'true'
+        run: ccache -s
 
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Artifact)
@@ -512,7 +523,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ inputs.PROJECT_PATH }}projects/
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x
 
       - name: Generate Project
@@ -604,7 +615,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ inputs.PROJECT_PATH }}projects/
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles('**/*.cpp', '**/*.h', '**/*.hxx', '**/*.cxx', '**/*.c', '**/premake5.lua') }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x
 
       - name: Generate Project
