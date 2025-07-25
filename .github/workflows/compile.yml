@@ -190,6 +190,8 @@ jobs:
     runs-on: ubuntu-latest
     container: raphaelit7/gmod-builder:latest_32x
     if: (inputs.BUILD_32x == 'true') && (inputs.BUILD_LINUX == 'true')
+    env:
+      PTERODACTYL_SERVER: ${{ secrets.PTERODACTYL_SERVER }}
     steps:
       - uses: actions/checkout@v4
         name: Checkout
@@ -279,7 +281,7 @@ jobs:
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
-        if: inputs.UPLOAD == 'pterodactyl'
+        if: inputs.UPLOAD == 'pterodactyl' && env.PTERODACTYL_SERVER != ''
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/linux/gmake/x86/ReleaseWithSymbols/
@@ -322,6 +324,8 @@ jobs:
     runs-on: ubuntu-latest
     container: raphaelit7/gmod-builder:latest_64x
     if: (inputs.BUILD_64x == 'true') && (inputs.BUILD_LINUX == 'true')
+    env:
+      PTERODACTYL_SERVER: ${{ secrets.PTERODACTYL_SERVER }}
     steps:
       - uses: actions/checkout@v4
         name: Checkout
@@ -403,7 +407,7 @@ jobs:
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
-        if: inputs.UPLOAD == 'pterodactyl'
+        if: inputs.UPLOAD == 'pterodactyl' && env.PTERODACTYL_SERVER != ''
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/linux/gmake/x86_64/ReleaseWithSymbols/
