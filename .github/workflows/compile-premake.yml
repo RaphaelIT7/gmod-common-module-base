@@ -1,0 +1,29 @@
+name: Build Premake5 from release source
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build on Linux
+    runs-on: ubuntu-latest
+    container: debian:bullseye
+    steps:
+      - name: Install dependencies
+        run: apt-get update && apt-get install -y build-essential unzip curl uuid-dev
+
+      - name: Download Premake Source
+        run: |
+          curl -L -o premake-src.zip https://github.com/premake/premake-core/releases/download/v5.0.0-beta7/premake-5.0.0-beta7-src.zip
+          unzip premake-src.zip -d premake
+
+      - name: Build Premake (Linux)
+        run: |
+          cd premake/build/gmake.unix
+          make config=release
+
+      - name: Upload Linux binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: premake5-linux
+          path: premake/bin/release/premake5
