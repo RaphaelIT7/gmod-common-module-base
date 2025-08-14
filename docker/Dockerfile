@@ -27,12 +27,17 @@ ENV CC="ccache gcc"
 ENV CXX="ccache g++"
 ENV PATH="/usr/lib/ccache:$PATH"
 ENV CCACHE_COMPILERCHECK=content
-ENV CCACHE_SLOPPINESS=time_macros,include_file_mtime,include_file_ctime,pch_defines
+ENV CCACHE_SLOPPINESS=time_macros,include_file_mtime,include_file_ctime,file_stat_matches,pch_defines
 ENV CCACHE_LOGFILE="/tmp/ccache.log"
 ENV CCACHE_VERBOSE=1
 ENV CCACHE_DEBUG=1
+ENV CCACHE_CLEAN=true
+ENV CCACHE_COMPRESS=1
+ENV CCACHE_COMPRESSION_LEVEL=6
+ENV CCACHE_MAXSIZE=200MB
+ENV CCACHE_LIMIT_MULTIPLE=0.8
 
-RUN ccache -M 1G && ccache -z
+RUN ccache -z
 
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
