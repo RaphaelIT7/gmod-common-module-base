@@ -171,6 +171,26 @@ on:
         required: false
         default: ""
         description: "Allows you to pass in a additional arguments to make"
+      ADDITIONAL_LINUX_32_SETUP:
+        type: string
+        required: false
+        default: ""
+        description: "Allows you to pass in some bash commands to execute before premake"
+      ADDITIONAL_LINUX_64_SETUP:
+        type: string
+        required: false
+        default: ""
+        description: "Allows you to pass in some bash commands to execute before premake"
+      ADDITIONAL_WINDOWS_32_SETUP:
+        type: string
+        required: false
+        default: ""
+        description: "Allows you to pass in some cmd commands to execute before premake"
+      ADDITIONAL_WINDOWS_64_SETUP:
+        type: string
+        required: false
+        default: ""
+        description: "Allows you to pass in some cmd commands to execute before premake"
     secrets:
       PTERODACTYL_KEY:
         required: false
@@ -250,6 +270,7 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
+          ${{inputs.ADDITIONAL_LINUX_32_SETUP}}
           premake5 --gmcommon=garrysmod_common gmake
 
       - name: Make
@@ -384,6 +405,7 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
+          ${{inputs.ADDITIONAL_LINUX_64_SETUP}}
           premake5 --gmcommon=garrysmod_common gmake
 
       - name: Make 64x
@@ -512,6 +534,7 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
+          ${{inputs.ADDITIONAL_WINDOWS_32_SETUP}}
           ./premake5.exe --gmcommon=garrysmod_common vs2022
 
       - name: Setup MSBuild environment
@@ -604,6 +627,7 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
+          ${{inputs.ADDITIONAL_WINDOWS_64_SETUP}}
           ./premake5.exe --gmcommon=garrysmod_common vs2022
 
       - name: Setup MSBuild environment
