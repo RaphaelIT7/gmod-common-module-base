@@ -292,7 +292,6 @@ jobs:
         with:
           path: /github/home/.cache/ccache
           key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
-          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
 
       - name: Show ccache stats
         if: inputs.BUILD_CACHE == 'true'
@@ -435,7 +434,6 @@ jobs:
         with:
           path: /github/home/.cache/ccache
           key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
-          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
 
       - name: Show ccache stats
         if: inputs.BUILD_CACHE == 'true'
