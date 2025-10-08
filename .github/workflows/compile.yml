@@ -53,6 +53,11 @@ on:
         required: false
         default: "false"
         description: "If enabled, it caches build files to improve build speed."
+      NO_SAVE_CACHE:
+        type: string
+        required: false
+        default: "false"
+        description: "If enabled, it caches won't save the cache."
       REALM:
         type: string
         required: false
@@ -255,9 +260,9 @@ jobs:
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
           submodules: 'recursive'
 
-      - name: Cache ccache
+      - name: Restore ccache
         if: inputs.BUILD_CACHE == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: /github/home/.cache/ccache
           key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
@@ -280,6 +285,14 @@ jobs:
           export CC="ccache gcc"
           export CXX="ccache g++"
           make ${{inputs.ADDITIONAL_ARGS_32x}}
+
+      - name: Save ccache
+        if: inputs.NO_SAVE_CACHE != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: /github/home/.cache/ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
 
       - name: Show ccache stats
         if: inputs.BUILD_CACHE == 'true'
@@ -390,9 +403,9 @@ jobs:
           path: '${{inputs.PROJECT_PATH}}garrysmod_common/detouring'
           submodules: 'recursive'
 
-      - name: Cache ccache
+      - name: Restore ccache
         if: inputs.BUILD_CACHE == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: /github/home/.cache/ccache
           key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
@@ -415,6 +428,14 @@ jobs:
           export CC="ccache gcc"
           export CXX="ccache g++"
           make config=releasewithsymbols_x86_64 ${{inputs.ADDITIONAL_ARGS_64x}}
+
+      - name: Save ccache
+        if: inputs.NO_SAVE_CACHE != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: /github/home/.cache/ccache
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
+          restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
 
       - name: Show ccache stats
         if: inputs.BUILD_CACHE == 'true'
