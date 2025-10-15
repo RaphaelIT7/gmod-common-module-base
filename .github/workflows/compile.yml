@@ -23,6 +23,11 @@ on:
         required: false
         default: ""
         description: "The Path to the project"
+      PROJECT_CONFIGURATION:
+        type: string
+        required: false
+        default: "ReleaseWithSymbols"
+        description: "The premake configuration to use"
       USE_PREFIX:
         type: string
         required: false
@@ -265,7 +270,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-${{inputs.PROJECT_CONFIGURATION}}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache
 
       - name: Generate Project
@@ -284,14 +289,15 @@ jobs:
           cd projects/linux/gmake
           export CC="ccache gcc"
           export CXX="ccache g++"
-          make ${{inputs.ADDITIONAL_ARGS_32x}}
+          CONFIG_LC=$(echo "${{inputs.PROJECT_CONFIGURATION}}_x86" | tr '[:upper:]' '[:lower:]')
+          make config=$CONFIG_LC ${{inputs.ADDITIONAL_ARGS_32x}}
 
       - name: Save ccache
         if: inputs.NO_SAVE_CACHE != 'true'
         uses: actions/cache/save@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-${{inputs.PROJECT_CONFIGURATION}}-32x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
 
       - name: Show ccache stats
         if: inputs.BUILD_CACHE == 'true'
@@ -310,14 +316,14 @@ jobs:
         if: inputs.UPLOAD == 'artifact'
         with:
           name: ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
-          path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
+          path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - name: Upload ${{env.PROJECT_NAME_LINUX32}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
         if: inputs.UPLOAD == 'pterodactyl' && env.PTERODACTYL_SERVER != ''
         run: |
           ${{env.PROJECT_PATH}}
-          cd projects/linux/gmake/x86/ReleaseWithSymbols/
+          cd projects/linux/gmake/x86/${{inputs.PROJECT_CONFIGURATION}}/
 
           if [ "${{inputs.PTERODACTYL_RESTART}}" = "true" ]; then
             curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/power" \
@@ -407,7 +413,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-${{inputs.PROJECT_CONFIGURATION}}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
           restore-keys: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache
 
       - name: Generate Project
@@ -426,14 +432,15 @@ jobs:
           cd projects/linux/gmake
           export CC="ccache gcc"
           export CXX="ccache g++"
-          make config=releasewithsymbols_x86_64 ${{inputs.ADDITIONAL_ARGS_64x}}
+          CONFIG_LC=$(echo "${{inputs.PROJECT_CONFIGURATION}}_x86_64" | tr '[:upper:]' '[:lower:]')
+          make config=$CONFIG_LC ${{inputs.ADDITIONAL_ARGS_64x}}
 
       - name: Save ccache
         if: inputs.NO_SAVE_CACHE != 'true'
         uses: actions/cache/save@v4
         with:
           path: /github/home/.cache/ccache
-          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
+          key: ${{ runner.os }}-${{ inputs.PROJECT_NAME }}-${{inputs.PROJECT_CONFIGURATION}}-64x-ccache-${{ hashFiles(format('{0}**/*.cpp', inputs.PROJECT_PATH), format('{0}**/*.h', inputs.PROJECT_PATH), format('{0}**/*.hxx', inputs.PROJECT_PATH), format('{0}**/*.cxx', inputs.PROJECT_PATH), format('{0}**/*.c', inputs.PROJECT_PATH), format('{0}**/premake5.lua', inputs.PROJECT_PATH)) }}
 
       - name: Show ccache stats
         if: inputs.BUILD_CACHE == 'true'
@@ -444,14 +451,14 @@ jobs:
         if: inputs.UPLOAD == 'artifact'
         with:
           name: "${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
+          path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - name: Upload ${{env.PROJECT_NAME_LINUX64}}.${{inputs.LINUX_FILEEXTENTION}} (Pterodactyl)
         if: inputs.UPLOAD == 'pterodactyl' && env.PTERODACTYL_SERVER != ''
         run: |
           ${{env.PROJECT_PATH}}
-          cd projects/linux/gmake/x86_64/ReleaseWithSymbols/
+          cd projects/linux/gmake/x86_64/${{inputs.PROJECT_CONFIGURATION}}/
 
           if [ "${{inputs.PTERODACTYL_RESTART}}" = "true" ]; then
             curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/power" \
@@ -484,7 +491,7 @@ jobs:
         if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
         with:
           name: "${{env.PROJECT_NAME_LINUX64}}.pdb (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX64}}.pdb
+          path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_LINUX64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
   build-windows:
@@ -563,14 +570,14 @@ jobs:
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/windows/vs2022
-          msbuild /p:Configuration=ReleaseWithSymbols /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
+          msbuild /p:Configuration=${{inputs.PROJECT_CONFIGURATION}} /p:Platform=Win32 ${{inputs.PROJECT_NAME}}.sln
 
       - uses: actions/upload-artifact@v4
         if: inputs.UPLOAD == 'artifact'
         name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
           name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - uses: actions/upload-artifact@v4
@@ -578,7 +585,7 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
         with:
           name: ${{env.PROJECT_NAME_WIN32}}.pdb
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
   build-windows-64x:
@@ -657,14 +664,14 @@ jobs:
         run: |
           ${{env.PROJECT_PATH}}
           cd projects/windows/vs2022
-          msbuild /p:Configuration=ReleaseWithSymbols /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
+          msbuild /p:Configuration=${{inputs.PROJECT_CONFIGURATION}} /p:Platform=x64 ${{inputs.PROJECT_NAME}}.sln
 
       - uses: actions/upload-artifact@v4
         if: inputs.UPLOAD == 'artifact'
         name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
           name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - uses: actions/upload-artifact@v4
@@ -672,5 +679,5 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
         with:
           name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
