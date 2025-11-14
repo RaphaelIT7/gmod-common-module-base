@@ -18,9 +18,7 @@ RUN echo "path-exclude /usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/excludes && \
     rm -f premake.tar.gz && \
     gcc --version && \
     strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX && \
-    rm -rf /var/lib/apt/lists/* /usr/share/* /usr/sbin/* /var/cache/* /var/log/* /var/tmp/* /var/lib/dpkg/info/* && \
-    gcc --version && \
-    strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX
+    rm -rf /var/lib/apt/lists/* /usr/share/* /usr/sbin/* /var/cache/* /var/log/* /var/tmp/* /var/lib/dpkg/info/*
 
 ENV CC="ccache gcc"
 ENV CXX="ccache g++"
