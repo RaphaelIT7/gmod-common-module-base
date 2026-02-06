@@ -201,7 +201,7 @@ on:
         required: false
         default: ""
         description: "Allows you to pass in some cmd commands to execute before premake"
-      BUILD_DEDICATED:
+      BUILD_WINDOWS_DEDICATED:
         type: string
         required: false
         default: "false"
@@ -216,10 +216,8 @@ on:
 env:
   PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux' || '') }}
   PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
-  PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.BUILD_DEDICATED == 'true' && '_dedicated' || '', inputs.USE_PREFIX == 'true' && '_win32' || '') }}
-  PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.BUILD_DEDICATED == 'true' && '_dedicated' || '', inputs.USE_PREFIX == 'true' && '_win64' || '') }}
-  BUILD_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
-  BUILD_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
+  PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
+  PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
   PROJECT_PATH: ${{ format('{0}{1}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH) }}
 
 jobs:
@@ -288,7 +286,7 @@ jobs:
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
           ${{inputs.ADDITIONAL_LINUX_32_SETUP}}
-          premake5 --gmcommon=garrysmod_common ${{ inputs.BUILD_DEDICATED == 'true' && '--dedicated' || '' }} gmake
+          premake5 --gmcommon=garrysmod_common ${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && '--dedicated' || '' }} gmake
 
       - name: Make
         run: |
@@ -431,7 +429,7 @@ jobs:
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
           ${{inputs.ADDITIONAL_LINUX_64_SETUP}}
-          premake5 --gmcommon=garrysmod_common ${{ inputs.BUILD_DEDICATED == 'true' && '--dedicated' || '' }} gmake
+          premake5 --gmcommon=garrysmod_common ${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && '--dedicated' || '' }} gmake
 
       - name: Make 64x
         run: |
@@ -568,7 +566,7 @@ jobs:
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
           ${{inputs.ADDITIONAL_WINDOWS_32_SETUP}}
-          ./premake5.exe --gmcommon=garrysmod_common ${{ inputs.BUILD_DEDICATED == 'true' && '--dedicated' || '' }} vs2022
+          ./premake5.exe --gmcommon=garrysmod_common ${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && '--dedicated' || '' }} vs2022
 
       - name: Setup MSBuild environment
         uses: microsoft/setup-msbuild@v1
@@ -583,16 +581,16 @@ jobs:
         if: inputs.UPLOAD == 'artifact'
         name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
-          name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.BUILD_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          name: "${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - uses: actions/upload-artifact@v4
         if: inputs.UPLOAD_PDB == 'true'
         name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
         with:
-          name: ${{env.PROJECT_NAME_WIN32}}.pdb
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.BUILD_NAME_WIN32}}.pdb
+          name: "${{env.PROJECT_NAME_WIN32}}.pdb${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
   build-windows-64x:
@@ -662,7 +660,7 @@ jobs:
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
           ${{inputs.ADDITIONAL_WINDOWS_64_SETUP}}
-          ./premake5.exe --gmcommon=garrysmod_common ${{ inputs.BUILD_DEDICATED == 'true' && '--dedicated' || '' }} vs2022
+          ./premake5.exe --gmcommon=garrysmod_common ${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && '--dedicated' || '' }} vs2022
 
       - name: Setup MSBuild environment
         uses: microsoft/setup-msbuild@v1
@@ -677,14 +675,14 @@ jobs:
         if: inputs.UPLOAD == 'artifact'
         name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
-          name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.BUILD_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - uses: actions/upload-artifact@v4
         if: inputs.UPLOAD_PDB == 'true'
         name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
         with:
-          name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.BUILD_NAME_WIN64}}.pdb
+          name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
