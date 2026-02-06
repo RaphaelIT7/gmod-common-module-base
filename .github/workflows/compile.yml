@@ -201,6 +201,11 @@ on:
         required: false
         default: ""
         description: "Allows you to pass in some cmd commands to execute before premake"
+      BUILD_DEDICATED:
+        type: string
+        required: false
+        default: "false"
+        description: "If enabled, passes --dedicated to premake5, which defines DEDICATED for a Windows dedicated server build."
     secrets:
       PTERODACTYL_KEY:
         required: false
@@ -281,7 +286,7 @@ jobs:
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
           ${{inputs.ADDITIONAL_LINUX_32_SETUP}}
-          premake5 --gmcommon=garrysmod_common gmake
+          premake5 --gmcommon=garrysmod_common ${{ inputs.BUILD_DEDICATED == 'true' && '--dedicated' || '' }} gmake
 
       - name: Make
         run: |
@@ -424,7 +429,7 @@ jobs:
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
           ${{inputs.ADDITIONAL_LINUX_64_SETUP}}
-          premake5 --gmcommon=garrysmod_common gmake
+          premake5 --gmcommon=garrysmod_common ${{ inputs.BUILD_DEDICATED == 'true' && '--dedicated' || '' }} gmake
 
       - name: Make 64x
         run: |
@@ -561,7 +566,7 @@ jobs:
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
           ${{inputs.ADDITIONAL_WINDOWS_32_SETUP}}
-          ./premake5.exe --gmcommon=garrysmod_common vs2022
+          ./premake5.exe --gmcommon=garrysmod_common ${{ inputs.BUILD_DEDICATED == 'true' && '--dedicated' || '' }} vs2022
 
       - name: Setup MSBuild environment
         uses: microsoft/setup-msbuild@v1
@@ -655,7 +660,7 @@ jobs:
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
           ${{inputs.ADDITIONAL_WINDOWS_64_SETUP}}
-          ./premake5.exe --gmcommon=garrysmod_common vs2022
+          ./premake5.exe --gmcommon=garrysmod_common ${{ inputs.BUILD_DEDICATED == 'true' && '--dedicated' || '' }} vs2022
 
       - name: Setup MSBuild environment
         uses: microsoft/setup-msbuild@v1
