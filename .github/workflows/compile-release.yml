@@ -213,6 +213,8 @@ env:
   PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
   PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.BUILD_DEDICATED == 'true' && '_dedicated' || '', inputs.USE_PREFIX == 'true' && '_win32' || '') }}
   PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.BUILD_DEDICATED == 'true' && '_dedicated' || '', inputs.USE_PREFIX == 'true' && '_win64' || '') }}
+  BUILD_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
+  BUILD_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
   PROJECT_PATH: ${{ format('{0}{1}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH) }}
 
 jobs:
@@ -553,7 +555,7 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
           name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.BUILD_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - uses: actions/upload-artifact@v4
@@ -561,7 +563,7 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
         with:
           name: ${{env.PROJECT_NAME_WIN32}}.pdb
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.BUILD_NAME_WIN32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
   build-windows-64x:
@@ -645,7 +647,7 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
           name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.BUILD_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
       - uses: actions/upload-artifact@v4
@@ -653,7 +655,7 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
         with:
           name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
-          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
+          path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.BUILD_NAME_WIN64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
   release:
