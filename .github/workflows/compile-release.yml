@@ -171,6 +171,11 @@ on:
         required: false
         default: ""
         description: "Allows you to pass in a additional arguments to make"
+      BUILD_WINDOWS_DEDICATED:
+        type: string
+        required: false
+        default: "false"
+        description: "If enabled, passes --dedicated to premake5, which defines DEDICATED for a Windows dedicated server build."
       RELEASE_PRE:
         type: boolean
         required: false
@@ -273,7 +278,7 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
-          premake5 --gmcommon=garrysmod_common gmake
+          premake5 --gmcommon=garrysmod_common ${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && '--dedicated' || '' }} gmake
 
       - name: Make
         run: |
@@ -405,7 +410,7 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
-          premake5 --gmcommon=garrysmod_common gmake
+          premake5 --gmcommon=garrysmod_common ${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && '--dedicated' || '' }} gmake
 
       - name: Make 64x
         run: |
@@ -533,7 +538,7 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
-          ./premake5.exe --gmcommon=garrysmod_common vs2022
+          ./premake5.exe --gmcommon=garrysmod_common ${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && '--dedicated' || '' }} vs2022
 
       - name: Setup MSBuild environment
         uses: microsoft/setup-msbuild@v1
@@ -547,7 +552,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
-          name: ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
+          name: "${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
@@ -555,7 +560,7 @@ jobs:
         if: inputs.UPLOAD_PDB == 'true'
         name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
         with:
-          name: ${{env.PROJECT_NAME_WIN32}}.pdb
+          name: "${{env.PROJECT_NAME_WIN32}}.pdb${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
@@ -625,7 +630,7 @@ jobs:
           echo "${{github.run_number}}" >> workflow_info.txt
           echo "${{github.ref_name}}" >> workflow_info.txt
           echo "${{inputs.ADDITIONAL_DATA}}" >> workflow_info.txt
-          ./premake5.exe --gmcommon=garrysmod_common vs2022
+          ./premake5.exe --gmcommon=garrysmod_common ${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && '--dedicated' || '' }} vs2022
 
       - name: Setup MSBuild environment
         uses: microsoft/setup-msbuild@v1
@@ -639,7 +644,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
-          name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)"
+          name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
@@ -647,7 +652,7 @@ jobs:
         if: inputs.UPLOAD_PDB == 'true'
         name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
         with:
-          name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)"
+          name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/ReleaseWithSymbols/${{env.PROJECT_NAME_WIN64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
