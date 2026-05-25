@@ -375,6 +375,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         name: Checkout
+        with:
+          submodules: recursive
 
       - uses: actions/checkout@v4
         name: Checkout garrysmod_common
@@ -507,6 +509,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         name: Checkout
+        with:
+          submodules: recursive
 
       - uses: actions/checkout@v4
         name: Checkout garrysmod_common
@@ -601,6 +605,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         name: Checkout
+        with:
+          submodules: recursive
 
       - uses: actions/checkout@v4
         name: Checkout garrysmod_common
