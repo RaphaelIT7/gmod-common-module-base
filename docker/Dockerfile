@@ -13,10 +13,9 @@ RUN echo "path-exclude /usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/excludes && \
         libstdc++6:i386 \
         curl git ca-certificates && \
     apt clean && \
-    curl -L -o premake.tar.gz https://github.com/RaphaelIT7/gmod-common-module-base/releases/download/Premake-beta-07/premake5-linux.tar.gz && \
-    tar -xvf premake.tar.gz --directory=/usr/bin && \
+    curl -L -o premake5 https://github.com/RaphaelIT7/gmod-common-module-base/releases/download/Premake-beta-08/premake5-linux && \
+    mv premake5 /usr/bin && \
     chmod +x /usr/bin/premake5 && \
-    rm -f premake.tar.gz && \
     gcc --version && \
     strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX && \
     rm -rf /var/lib/apt/lists/* /usr/share/* /usr/sbin/* /var/cache/* /var/log/* /var/tmp/* /var/lib/dpkg/info/*

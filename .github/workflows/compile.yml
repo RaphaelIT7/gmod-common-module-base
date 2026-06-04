@@ -554,7 +554,7 @@ jobs:
       - name: Install Premake
         run: |
           ${{env.PROJECT_PATH}}
-          curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-beta7/premake-5.0.0-beta7-windows.zip -o premake.zip
+          curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-beta8/premake-5.0.0-beta8-windows.zip -o premake.zip
           tar -xf premake.zip
 
       - name: Cache MSBuild output
@@ -650,7 +650,7 @@ jobs:
       - name: Install Premake
         run: |
           ${{env.PROJECT_PATH}}
-          curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-beta7/premake-5.0.0-beta7-windows.zip -o premake.zip
+          curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-beta8/premake-5.0.0-beta8-windows.zip -o premake.zip
           tar -xf premake.zip
 
       - name: Cache MSBuild output
