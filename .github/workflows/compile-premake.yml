@@ -2,28 +2,55 @@ name: Build Premake5 from release source
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/compile-premake.yml'
 
 jobs:
   build-linux:
     name: Build on Linux
     runs-on: ubuntu-latest
     container: debian:bullseye
+    permissions:
+      contents: write
     steps:
       - name: Install dependencies
         run: apt-get update && apt-get install -y build-essential unzip curl uuid-dev
 
       - name: Download Premake Source
         run: |
-          curl -L -o premake-src.zip https://github.com/premake/premake-core/releases/download/v5.0.0-beta7/premake-5.0.0-beta7-src.zip
+          curl -L -o premake-src.zip https://codeload.github.com/premake/premake-core/zip/refs/tags/v5.0.0-beta8
           unzip premake-src.zip -d premake
 
       - name: Build Premake (Linux)
         run: |
-          cd premake/build/gmake.unix
-          make config=release
+          cd premake/premake-core-5.0.0-beta8/
+          ./Bootstrap.sh
 
       - name: Upload Linux binary
         uses: actions/upload-artifact@v4
         with:
           name: premake5-linux
-          path: premake/bin/release/premake5
+          path: premake/premake-core-5.0.0-beta8/bin/release/premake5
+
+      - name: Create Release
+        id: create_release
+        uses: shogo82148/actions-create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_id }}
+          release_name: Release ${{ github.run_id }}
+          draft: true
+          prerelease: false
+          make_latest: false
+
+      - name: Upload Linux binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: premake/premake-core-5.0.0-beta8/bin/release/premake5
+          asset_name: premake5-linux
+          asset_content_type: application/octet-stream
