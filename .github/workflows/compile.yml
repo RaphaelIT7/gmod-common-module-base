@@ -33,6 +33,11 @@ on:
         required: false
         default: "true"
         description: "If enabled, it will use the gm[realm]_[Project]_[platform].[extension] format. Else, it will just use [Project].[extension] name."
+      ADDITIONAL_POSTARTIFACTNAME:
+        type: string
+        required: false
+        default: ""
+        description: "A default to append after the artifact name"
       BUILD_64x:
         type: string
         required: false
@@ -362,7 +367,7 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_LINUX32}}.pdb (Artifact)
         if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
         with:
-          name: ${{env.PROJECT_NAME_LINUX32}}.pdb
+          name: ${{env.PROJECT_NAME_LINUX32}}.pdb${{ inputs.ADDITIONAL_POSTARTIFACTNAME }}
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86/ReleaseWithSymbols/${{env.PROJECT_NAME_LINUX32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
@@ -499,7 +504,7 @@ jobs:
         name: Upload ${{env.PROJECT_NAME_LINUX64}}.pdb (Artifact)
         if: inputs.UPLOAD == 'artifact' && inputs.UPLOAD_PDB == 'true'
         with:
-          name: "${{env.PROJECT_NAME_LINUX64}}.pdb (64x)"
+          name: "${{env.PROJECT_NAME_LINUX64}}.pdb (64x)${{ inputs.ADDITIONAL_POSTARTIFACTNAME }}"
           path: ${{inputs.PROJECT_PATH}}projects/linux/gmake/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_LINUX64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
@@ -587,7 +592,7 @@ jobs:
         if: inputs.UPLOAD == 'artifact'
         name: Upload ${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
-          name: "${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
+          name: "${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}${{ inputs.ADDITIONAL_POSTARTIFACTNAME }}${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN32}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
@@ -595,7 +600,7 @@ jobs:
         if: inputs.UPLOAD_PDB == 'true'
         name: Upload ${{env.PROJECT_NAME_WIN32}}.pdb (Artifact)
         with:
-          name: "${{env.PROJECT_NAME_WIN32}}.pdb${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
+          name: "${{env.PROJECT_NAME_WIN32}}.pdb${{ inputs.ADDITIONAL_POSTARTIFACTNAME }}${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN32}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
 
@@ -683,7 +688,7 @@ jobs:
         if: inputs.UPLOAD == 'artifact'
         name: Upload ${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (Artifact)
         with:
-          name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
+          name: "${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}} (64x)${{ inputs.ADDITIONAL_POSTARTIFACTNAME }}${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN64}}.${{inputs.WINDOWS_FILEEXTENTION}}
           retention-days: ${{inputs.ARTIFACT_EXPIRE}}
 
@@ -691,6 +696,6 @@ jobs:
         if: inputs.UPLOAD_PDB == 'true'
         name: Upload ${{env.PROJECT_NAME_WIN64}}.pdb (Artifact)
         with:
-          name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
+          name: "${{env.PROJECT_NAME_WIN64}}.pdb (64x)${{ inputs.ADDITIONAL_POSTARTIFACTNAME }}${{ inputs.BUILD_WINDOWS_DEDICATED == 'true' && ' (Dedicated)' || '' }}"
           path: ${{inputs.PROJECT_PATH}}projects/windows/vs2022/x86_64/${{inputs.PROJECT_CONFIGURATION}}/${{env.PROJECT_NAME_WIN64}}.pdb
           retention-days: ${{inputs.PDB_ARTIFACT_EXPIRE}}
