@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:trixie-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -12,7 +12,7 @@ RUN echo "path-exclude /usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/excludes && \
       git ccache \
       ca-certificates && \
     apt clean && \
-    curl -L -o premake5 https://github.com/RaphaelIT7/gmod-common-module-base/releases/download/Premake-beta-08/premake5-linux && \
+    curl -fL -o premake5 https://github.com/RaphaelIT7/gmod-common-module-base/releases/download/Premake-beta-08/premake5-linux && \
     mv premake5 /usr/bin && \
     chmod +x /usr/bin/premake5 && \
     gcc --version && \
