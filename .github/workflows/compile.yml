@@ -33,6 +33,11 @@ on:
         required: false
         default: "true"
         description: "If enabled, it will use the gm[realm]_[Project]_[platform].[extension] format. Else, it will just use [Project].[extension] name."
+      SUFFIX_64x:
+        type: string
+        required: false
+        default: ""
+        description: "A suffix the resulting binary may have on 64x"
       ADDITIONAL_POSTARTIFACTNAME:
         type: string
         required: false
@@ -218,9 +223,9 @@ on:
         required: false
       PTERODACTYL_URL:
         required: false
-env:
+env: # I should try to clean this up at some point... anyways lets make it worse
   PROJECT_NAME_LINUX32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux' || '') }}
-  PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
+  PROJECT_NAME_LINUX64: ${{ format('{0}{1}{2}{3}{4}{5}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.SUFFIX_64x, inputs.USE_PREFIX == 'true' && '_linux64' || '') }}
   PROJECT_NAME_WIN32: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win32' || '') }}
   PROJECT_NAME_WIN64: ${{ format('{0}{1}{2}{3}{4}', inputs.USE_PREFIX == 'true' && 'gm' || '', inputs.USE_PREFIX == 'true' && inputs.REALM || '', inputs.USE_PREFIX == 'true' && '_' || '', inputs.PROJECT_NAME, inputs.USE_PREFIX == 'true' && '_win64' || '') }}
   PROJECT_PATH: ${{ format('{0}{1}', inputs.PROJECT_PATH != '' && 'cd ' || '', inputs.PROJECT_PATH) }}
